@@ -74,9 +74,9 @@ class _SkillsTable extends StatelessWidget {
 
   static const _rows = [
     _SkillRow('2023–25', 'Software Engineering',
-        ['Flutter', 'Dart', 'Power Apps', 'Power Automate']),
+        ['Flutter', 'Dart', 'HTML/CSS/JS', 'Power Apps']),
     _SkillRow('2023–25', 'Business Automation',
-        ['Power BI', 'Excel VBA', 'API Integration', 'SQL']),
+        ['Power Automate', 'Power BI', 'Excel VBA', 'API Integration']),
     _SkillRow('2024–25', 'Digital Marketing',
         ['SEO', 'CMS', 'Social Media', 'Lead Generation']),
     _SkillRow('2022–25', 'IT Administration',

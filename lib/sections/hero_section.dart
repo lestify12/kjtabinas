@@ -140,7 +140,7 @@ class _WideHero extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Flutter · Web · Automation',
+                  'Flutter · Web · Mobile · Automation',
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     color: AppTheme.textGray,
@@ -335,7 +335,7 @@ class _NarrowHero extends StatelessWidget {
           const SizedBox(height: 16),
 
           Text(
-            'SOFTWARE ENGINEER\nFlutter · Web · Automation',
+            'SOFTWARE ENGINEER\nFlutter · Web · Mobile · Automation',
             style: GoogleFonts.inter(
               fontSize: 15,
               color: AppTheme.textGray,
