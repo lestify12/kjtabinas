@@ -1,0 +1,12 @@
+{
+    "name": "Krystler John Tabinas Portfolio",
+    "short_name": "KJT Portfolio",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0A0E1A",
+    "theme_color": "#00D4FF",
+    "description": "Software Engineer & Flutter Developer Portfolio",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": []
+}

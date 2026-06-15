@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Krystler John Tabinas — Software Engineer &amp; Flutter Developer Portfolio">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="KJT Portfolio">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <title>Krystler John Tabinas | Portfolio</title>
+  <style>
+    body {
+      background-color: #F5F0E8;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #F5F0E8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s ease;
+    }
+    .loader-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .loader-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #0A0A0A;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.15; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+    flt-glass-pane, flt-scene-host, canvas, flt-renderer {
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="loader-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      const el = document.getElementById('loading');
+      if (el) {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
