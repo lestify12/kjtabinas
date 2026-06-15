@@ -41,7 +41,7 @@ class SkillsSection extends StatelessWidget {
 
             const SizedBox(height: 64),
 
-            // Tech chips
+            // Tech marquee
             Text(
               'TECHNOLOGIES',
               style: GoogleFonts.inter(
@@ -51,16 +51,10 @@ class SkillsSection extends StatelessWidget {
                 letterSpacing: 3,
               ),
             ),
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: PortfolioData.technicalSkills
-                  .asMap()
-                  .entries
-                  .map((e) => _TechChip(e.value, e.key))
-                  .toList(),
-            ),
+            const SizedBox(height: 24),
+            const _MarqueeBand(reverse: false),
+            const SizedBox(height: 12),
+            const _MarqueeBand(reverse: true),
           ],
         ),
       ),
@@ -210,16 +204,83 @@ class _Pill extends StatelessWidget {
   }
 }
 
-class _TechChip extends StatefulWidget {
-  final String label;
-  final int index;
-  const _TechChip(this.label, this.index);
+// ─── Marquee band ────────────────────────────────────────────────────────────
+
+class _MarqueeBand extends StatefulWidget {
+  final bool reverse;
+  const _MarqueeBand({required this.reverse});
 
   @override
-  State<_TechChip> createState() => _TechChipState();
+  State<_MarqueeBand> createState() => _MarqueeBandState();
 }
 
-class _TechChipState extends State<_TechChip> {
+class _MarqueeBandState extends State<_MarqueeBand>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  static const _row1 = [
+    'Flutter & Dart', 'Microsoft Power Platform', 'Power Apps',
+    'Power Automate', 'Power BI', 'Excel VBA',
+  ];
+  static const _row2 = [
+    'SQL', 'API Integration', 'Git', 'HTML / CSS / JS',
+    'CMS Management', 'Microsoft 365',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 18),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = widget.reverse ? _row2 : _row1;
+    // Duplicate list for seamless loop
+    final doubled = [...items, ...items];
+
+    return SizedBox(
+      height: 44,
+      child: AnimatedBuilder(
+        animation: _ctrl,
+        builder: (_, __) {
+          final offset = widget.reverse
+              ? (1 - _ctrl.value)
+              : _ctrl.value;
+          return ClipRect(
+            child: FractionalTranslation(
+              translation: Offset(-offset, 0),
+              child: Row(
+                children: doubled
+                    .map((label) => _MarqueeChip(label))
+                    .toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _MarqueeChip extends StatefulWidget {
+  final String label;
+  const _MarqueeChip(this.label);
+
+  @override
+  State<_MarqueeChip> createState() => _MarqueeChipState();
+}
+
+class _MarqueeChipState extends State<_MarqueeChip> {
   bool _hovered = false;
 
   @override
@@ -229,13 +290,21 @@ class _TechChipState extends State<_TechChip> {
       onExit: (_) => setState(() => _hovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        margin: const EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           color: _hovered ? AppTheme.textBlack : AppTheme.bgWhite,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-              color: _hovered ? AppTheme.textBlack : AppTheme.border),
+            color: _hovered ? AppTheme.textBlack : AppTheme.border,
+          ),
+          boxShadow: _hovered ? [] : [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Text(
           widget.label,

@@ -53,7 +53,6 @@ const _projects = [
     tags: ['HTML/CSS/JS', 'Supabase', 'Cloudflare', 'Real Estate', 'UAE'],
     accentColor: Color(0xFF00D4FF),
     status: 'Live',
-    liveUrl: 'https://luxepm.online',
   ),
   ProjectItem(
     title: 'Excel VBA Automation',
@@ -441,7 +440,7 @@ class _ScreenshotState extends State<_Screenshot>
             opacity: _fade,
             child: Image.asset(
               img,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitWidth,
               alignment: Alignment.topCenter,
               errorBuilder: (_, __, ___) => Container(
                 color: const Color(0xFF0D1829),
