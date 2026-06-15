@@ -1,1 +1,0 @@
- C:\\Users\\kryst\\OneDrive\\Documents\\PORTFOLIO\\portfolio\\build\\web\\manifest.json:  C:\\Users\\kryst\\OneDrive\\Documents\\PORTFOLIO\\portfolio\\web\\index.html C:\\Users\\kryst\\OneDrive\\Documents\\PORTFOLIO\\portfolio\\web\\manifest.json

@@ -1,3 +1,10 @@
+# Flutter
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.cache.dill.track.dill
+
 # Logs
 logs
 *.log
