@@ -31,9 +31,8 @@ jobs:
         run: flutter build web --release
 
       - name: Deploy to Firebase Hosting
-        run: |
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
-          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
-          npx firebase-tools@13 deploy --only hosting --project myportfolio-7b350 --non-interactive
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting --project myportfolio-7b350
         env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
