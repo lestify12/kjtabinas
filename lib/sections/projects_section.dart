@@ -24,6 +24,7 @@ class ProjectItem {
   final bool isCodeProject;
   final String? liveUrl;
   final String? browserUrl;
+  final List<String> imageLabels;
 
   const ProjectItem({
     required this.title,
@@ -39,6 +40,7 @@ class ProjectItem {
     this.isCodeProject = false,
     this.liveUrl,
     this.browserUrl,
+    this.imageLabels = const [],
   });
 }
 
@@ -63,11 +65,17 @@ const _projects = [
         'A complete HRIS built from scratch for Luxe Signature. Handles employee records, '
         'biometric attendance sync, leave and cash-advance requests, approval workflows, '
         'payroll, and recruitment — with role-based dashboards and self-service for every employee.',
-    image: 'assets/images/hris_dashboard.png',
+    image: 'assets/images/hris_dashboard.jpg',
+    imageAlt: 'assets/images/hris_attendance.jpg',
+    extraImages: [
+      'assets/images/hris_requests.jpg',
+      'assets/images/hris_profile.jpg',
+    ],
     tags: ['Web App', 'Supabase', 'Workflow Automation', 'Biometric Sync', 'UAE'],
     accentColor: Color(0xFF4F46E5),
     status: 'Live',
     browserUrl: 'hris.luxesignature.ae',
+    imageLabels: ['Dashboard', 'Attendance', 'Requests', 'Profile'],
   ),
   ProjectItem(
     title: 'Excel VBA Automation',
@@ -574,7 +582,12 @@ class _ScreenshotState extends State<_Screenshot>
                   border: Border.all(color: AppTheme.border),
                 ),
                 child: Text(
-                  _index < _labels.length ? _labels[_index] : '',
+                  (() {
+                    final labels = widget.project.imageLabels.isNotEmpty
+                        ? widget.project.imageLabels
+                        : _labels;
+                    return _index < labels.length ? labels[_index] : '';
+                  })(),
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     color: AppTheme.textGray,
