@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+# Cancel an in-progress deploy if a newer one starts
+concurrency:
+  group: firebase-deploy
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -16,6 +22,7 @@ jobs:
         with:
           flutter-version: '3.32.2'
           channel: 'stable'
+          cache: true
 
       - name: Install dependencies
         run: flutter pub get
@@ -24,4 +31,6 @@ jobs:
         run: flutter build web --release
 
       - name: Deploy to Firebase
-        run: npx firebase-tools deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}" --non-interactive
+        run: npx firebase-tools@13 deploy --only hosting --project myportfolio-7b350 --token "$FIREBASE_TOKEN" --non-interactive
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
