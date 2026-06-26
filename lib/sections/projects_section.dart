@@ -119,7 +119,7 @@ class ProjectsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionLabel(number: '02', title: 'Recent Projects'),
+            const SectionLabel(number: '03', title: 'Recent Projects'),
             Text(
               "Things I've\nBuilt",
               style: GoogleFonts.playfairDisplay(

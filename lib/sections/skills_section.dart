@@ -21,7 +21,7 @@ class SkillsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionLabel(number: '03', title: 'I Can Help You With'),
+            const SectionLabel(number: '02', title: 'I Can Help You With'),
             const SizedBox(height: 8),
             Text(
               'Experience & Skills',
