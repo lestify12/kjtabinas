@@ -119,7 +119,17 @@ class _WideHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'SOFTWARE',
+                  'AI',
+                  style: GoogleFonts.inter(
+                    fontSize: size.width * 0.038,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.textBlack,
+                    letterSpacing: -1,
+                    height: 0.95,
+                  ),
+                ),
+                Text(
+                  'AUTOMATION',
                   style: GoogleFonts.inter(
                     fontSize: size.width * 0.038,
                     fontWeight: FontWeight.w900,
@@ -140,7 +150,7 @@ class _WideHero extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Flutter · Web · Mobile · Automation',
+                  'AI Agents · Workflows · API Integrations',
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     color: AppTheme.textGray,
@@ -335,7 +345,7 @@ class _NarrowHero extends StatelessWidget {
           const SizedBox(height: 16),
 
           Text(
-            'SOFTWARE ENGINEER\nFlutter · Web · Mobile · Automation',
+            'AI AUTOMATION ENGINEER\nAI Agents · Workflows · API Integrations',
             style: GoogleFonts.inter(
               fontSize: 15,
               color: AppTheme.textGray,

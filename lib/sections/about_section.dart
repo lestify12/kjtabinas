@@ -70,8 +70,8 @@ class _Bio extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          'Currently based in Dubai, UAE — working at Luxe Signature Holiday Homes building automation tools, '
-          'web applications, and AI-driven systems that transform real estate operations.',
+          'Currently based in Dubai, UAE — building AI agents, workflow automations, and internal '
+          'business systems at Luxe Signature Holiday Homes that streamline real estate operations end-to-end.',
           style: GoogleFonts.inter(
             fontSize: 15,
             color: AppTheme.textGray,
@@ -122,7 +122,7 @@ class _Stats extends StatelessWidget {
         const SizedBox(height: 12),
         _StatRow('3+', 'Years of Experience'),
         _Divider(),
-_StatRow('7', 'Companies Worked'),
+        _StatRow('5', 'Companies Worked'),
         _Divider(),
         _StatRow('2', 'Countries Operated'),
         _Divider(),

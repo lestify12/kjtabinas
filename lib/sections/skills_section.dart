@@ -67,14 +67,14 @@ class _SkillsTable extends StatelessWidget {
   const _SkillsTable({required this.isNarrow});
 
   static const _rows = [
-    _SkillRow('2023–25', 'Software Engineering',
-        ['Flutter', 'Dart', 'HTML/CSS/JS', 'Power Apps']),
-    _SkillRow('2023–25', 'Business Automation',
-        ['Power Automate', 'Power BI', 'Excel VBA', 'API Integration']),
-    _SkillRow('2024–25', 'Digital Marketing',
-        ['SEO', 'CMS', 'Social Media', 'Lead Generation']),
-    _SkillRow('2022–25', 'IT Administration',
-        ['Microsoft 365', 'Git', 'HTML/CSS/JS', 'Cybersecurity']),
+    _SkillRow('2025–Now', 'AI & Automation',
+        ['Claude Code', 'AI Agents', 'MCP', 'Workflow Automation']),
+    _SkillRow('2023–Now', 'API & Integration',
+        ['REST APIs', 'Webhooks', 'n8n', 'OAuth']),
+    _SkillRow('2023–25', 'Low-Code & BI',
+        ['Power Apps', 'Power Automate', 'Power BI', 'Excel VBA']),
+    _SkillRow('2024–25', 'App & Web Dev',
+        ['Flutter', 'Dart', 'JavaScript', 'Supabase']),
   ];
 
   @override
@@ -219,12 +219,12 @@ class _MarqueeBandState extends State<_MarqueeBand>
   late final AnimationController _ctrl;
 
   static const _row1 = [
-    'Flutter & Dart', 'Microsoft Power Platform', 'Power Apps',
-    'Power Automate', 'Power BI', 'Excel VBA',
+    'Claude Code', 'AI Agents', 'MCP', 'Workflow Automation',
+    'n8n', 'Prompt Engineering',
   ];
   static const _row2 = [
-    'SQL', 'API Integration', 'Git', 'HTML / CSS / JS',
-    'CMS Management', 'Microsoft 365',
+    'REST APIs', 'Webhooks', 'Flutter', 'Python',
+    'JavaScript', 'Power BI', 'SQL', 'Supabase',
   ];
 
   @override

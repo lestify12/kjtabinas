@@ -73,7 +73,7 @@ class ContactSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '© 2025 Krystler John Tabinas',
+                  '© 2026 Krystler John Tabinas',
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     color: Colors.white.withValues(alpha: 0.3),

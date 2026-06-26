@@ -33,137 +33,120 @@ class EducationItem {
 class PortfolioData {
   static const String name = 'Krystler John Tabinas';
   static const String email = 'krystlertabinas1999@gmail.com';
-  static const String phone = '+63 954 442 0970';
-  static const String location = 'Bacolod, Negros Occidental, Philippines';
+  static const String phone = '+971 55 933 9921';
+  static const String location = 'Dubai, United Arab Emirates';
 
   static const String profileSummary =
-      'Software Engineer & Marketing Specialist with a passion for building elegant digital solutions. '
-      'Experienced in business process automation, AI-driven systems, Flutter development, '
-      'and digital transformation — turning complex workflows into scalable, beautiful products.';
+      'AI Automation Engineer specializing in designing and deploying production-ready '
+      'workflow automations, AI agents, and API integrations. I build internal business '
+      'systems, automate operational workflows, and rapidly ship solutions using modern '
+      'AI-assisted development tools like Claude Code, ChatGPT, and Gemini — owning '
+      'projects end-to-end with minimal supervision.';
 
   static const List<String> roles = [
-    'Software Engineer',
-    'Flutter Developer',
-    'Business Solutions Architect',
-    'AI & Automation Specialist',
+    'AI Automation Engineer',
+    'Workflow Automation Specialist',
+    'AI Agent Developer',
+    'Low-Code Developer',
   ];
 
   static const List<String> technicalSkills = [
-    'Flutter & Dart',
-    'Microsoft Power Platform',
-    'Power Apps',
-    'Power Automate',
+    'Claude Code',
+    'AI Agents',
+    'MCP',
+    'Workflow Automation',
+    'REST APIs',
+    'Webhooks',
+    'n8n',
+    'Power Platform',
+    'Flutter',
+    'Python',
+    'JavaScript',
     'Power BI',
-    'Excel VBA',
-    'SQL',
-    'API Integration',
-    'Git',
-    'HTML / CSS / JS',
-    'CMS Management',
-    'Microsoft 365',
   ];
 
   static const List<String> softSkills = [
     'Business Process Automation',
-    'Software Development',
-    'AI & Digital Transformation',
-    'Real Estate Marketing',
-    'Workflow Optimization',
+    'AI-Assisted Development',
+    'API Integration',
+    'Prompt Engineering',
     'Data Analysis & Reporting',
     'IT Administration',
-    'Project Coordination',
-    'Executive Assistance',
-    'Communication & Leadership',
+    'Requirements Gathering',
+    'End-to-End Ownership',
+    'Process Documentation',
+    'Communication & Collaboration',
   ];
 
   static const List<ExperienceItem> experiences = [
     ExperienceItem(
-      title: 'Software Engineer (Business Solutions) / Marketing Specialist',
+      title: 'AI Automation Engineer | Business Systems Engineer',
       company: 'Luxe Signature Holiday Homes',
       location: 'Dubai, UAE',
-      period: 'Current',
+      period: 'Dec 2025 — Present',
       color: '00D4FF',
       highlights: [
-        'Develop web applications and automation tools for operational efficiency',
-        'Build AI-driven systems for business insights and decision-making',
-        'Manage real estate digital marketing across multiple platforms',
-        'Integrate systems, databases, and third-party platforms',
+        'Designed and built a complete Property Management System for holiday homes and long-term rentals',
+        'Created modules for leases, tenant onboarding, payments, invoices, approvals, dashboards, and reporting',
+        'Designed and developed a full HRIS from scratch — attendance sync, leave, payroll, records, and self-service',
+        'Built workflow automations and AI agents using Claude Code, ChatGPT, and Model Context Protocol (MCP)',
+        'Integrated REST APIs, webhooks, databases, and cloud storage to eliminate manual processes',
       ],
     ),
     ExperienceItem(
-      title: 'Sales Admin & Collections | Operations',
-      company: 'Suliter International Building Materials',
+      title: 'Business Systems & IT Administrator',
+      company: 'Suliter International Building Materials Trading L.L.C',
       location: 'Dubai, UAE',
-      period: '',
-      color: '7B2FBE',
+      period: 'Apr 2025 — Dec 2025',
+      color: 'FF6B35',
       highlights: [
-        'Managed purchase orders and supplier negotiations',
-        'Generated sales performance and collection status reports',
-        'Tracked order fulfillment ensuring on-time delivery',
-        'Maintained accurate records for reporting and auditing',
+        'Developed internal automation tools that reduced manual administrative work',
+        'Built approval workflows, document generation, and reporting systems for operations',
+        'Created business apps to streamline quotations, purchase orders, inventory, and collections',
+        'Automated repetitive Excel processes using formulas, VBA, and workflow automation',
+        'Maintained company IT infrastructure, user accounts, networks, and business systems',
       ],
     ),
     ExperienceItem(
-      title: 'DX Solutions Developer',
-      company: 'Lexmark Corporation',
+      title: 'IT Administrator / Flutter Developer',
+      company: 'GC&C Group — Cleverminds Digital Solutions Inc.',
       location: 'Philippines',
-      period: '',
-      color: '00FF88',
+      period: 'Feb 2024 — Feb 2025',
+      color: '2563EB',
       highlights: [
-        'Built custom web apps using Microsoft PowerApps for internal workflows',
-        'Automated business processes with Power Automate',
-        'Created Power BI dashboards for performance tracking',
-        'Delivered scalable digital solutions for cross-functional teams',
+        'Built a cross-platform Parking Management app in Flutter with real-time availability and QR-based access',
+        'Integrated REST APIs and backend services for real-time data synchronization',
+        'Developed responsive UIs and optimized app performance for Android and iOS',
+        'Implemented state management, testing, debugging, and version control',
+        'Administered company IT infrastructure and provided technical support',
       ],
     ),
     ExperienceItem(
-      title: 'Web and Mobile Developer',
-      company: 'GC&C Group of Companies',
+      title: 'DX Solutions Developer (Power Platform)',
+      company: 'Lexmark International Philippines',
       location: 'Philippines',
-      period: '',
-      color: 'FF6B6B',
+      period: 'Jul 2023 — Dec 2023',
+      color: '16A34A',
       highlights: [
-        'Developed a cross-platform Parking Management app using Flutter',
-        'Integrated RESTful APIs for real-time data exchange',
-        'Implemented state management with Provider pattern',
-        'Provided IT support and cybersecurity protocols',
+        'Built enterprise business apps with Microsoft Power Apps to digitize internal processes',
+        'Automated workflows with Power Automate, cutting manual effort across departments',
+        'Developed interactive Power BI dashboards for real-time reporting and KPI tracking',
+        'Integrated apps with Microsoft 365, SharePoint, Excel, and SQL databases',
+        'Collaborated with cross-functional teams to deliver scalable low-code solutions',
       ],
     ),
     ExperienceItem(
-      title: 'Mobile Application Support / Tech Support',
-      company: 'Zetta Solutions Inc.',
-      location: 'Philippines',
-      period: '',
-      color: 'FFD93D',
-      highlights: [
-        'Designed E-Wallet UIs for Modern Jeepney operations in Flutter',
-        'Resolved bugs and technical issues in deployed mobile apps',
-        'Collaborated on smooth deployment and maintenance of mobile solutions',
-      ],
-    ),
-    ExperienceItem(
-      title: 'Internal Business Data Analyst (Intern)',
-      company: 'Lear Corporation',
-      location: 'Philippines',
-      period: '',
-      color: 'FF8C42',
-      highlights: [
-        'Developed VBA scripts and Excel macros to streamline internal processes',
-        'Created Power BI dashboards for data-driven decision-making',
-        'Delivered actionable insights for weekly team meetings',
-      ],
-    ),
-    ExperienceItem(
-      title: 'Virtual Assistant — IT / SEO / Web / Automation',
-      company: 'YLifestyle Design and Management',
-      location: 'New York, USA (Remote)',
-      period: '',
+      title: 'IT Operations & Automation Specialist — Virtual Assistant',
+      company: 'YLifestyle Design & Management',
+      location: 'Remote — US Client',
+      period: 'Feb 2023 — Apr 2025',
       color: 'C77DFF',
       highlights: [
-        'Managed tenant payments, tracking balances in AppFolio',
-        'Built Excel reporting with pivot tables and data validation',
-        'Provided CEO-level administrative and operational support',
-        'Handled SEO, social media management, and website development',
+        'Administered AppFolio and maintained accurate tenant, lease, owner, and financial records',
+        'Automated operational reports, KPI dashboards, and owner statements using Microsoft Excel',
+        'Developed and maintained internal websites, business tools, and process improvements',
+        'Built automated reporting for collections, occupancy, and financial performance',
+        'Managed IT operations, user support, and SEO/website updates for remote teams',
       ],
     ),
   ];
@@ -174,12 +157,6 @@ class PortfolioData {
       school: 'Cebu Institute of Technology - University',
       year: '2023',
       icon: '🎓',
-    ),
-    EducationItem(
-      degree: 'Science, Technology, Engineering & Mathematics',
-      school: 'Sotero B. Cabahug FORUM for Literacy',
-      year: '2019',
-      icon: '🔬',
     ),
   ];
 }

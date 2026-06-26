@@ -141,7 +141,9 @@ class _ExpRowState extends State<_ExpRow>
                           child: Text(
                             widget.exp.location.contains('Dubai')
                                 ? 'Dubai'
-                                : 'Philippines',
+                                : widget.exp.location.contains('Remote')
+                                    ? 'Remote'
+                                    : 'Philippines',
                             style: GoogleFonts.inter(
                               fontSize: 12,
                               color: AppTheme.textLight,
@@ -175,7 +177,7 @@ class _ExpRowState extends State<_ExpRow>
                         ),
                       ),
 
-                      if (widget.exp.period == 'Current')
+                      if (widget.exp.period.contains('Present'))
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 4),
