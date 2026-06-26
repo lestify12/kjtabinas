@@ -23,6 +23,7 @@ class ProjectItem {
   final bool isMobileApp;
   final bool isCodeProject;
   final String? liveUrl;
+  final String? browserUrl;
 
   const ProjectItem({
     required this.title,
@@ -37,6 +38,7 @@ class ProjectItem {
     this.isMobileApp = false,
     this.isCodeProject = false,
     this.liveUrl,
+    this.browserUrl,
   });
 }
 
@@ -53,6 +55,19 @@ const _projects = [
     tags: ['HTML/CSS/JS', 'Supabase', 'Cloudflare', 'Real Estate', 'UAE'],
     accentColor: Color(0xFF00D4FF),
     status: 'Live',
+  ),
+  ProjectItem(
+    title: 'Luxe HRIS',
+    subtitle: 'Human Resource Information System',
+    description:
+        'A complete HRIS built from scratch for Luxe Signature. Handles employee records, '
+        'biometric attendance sync, leave and cash-advance requests, approval workflows, '
+        'payroll, and recruitment — with role-based dashboards and self-service for every employee.',
+    image: 'assets/images/hris_dashboard.png',
+    tags: ['Web App', 'Supabase', 'Workflow Automation', 'Biometric Sync', 'UAE'],
+    accentColor: Color(0xFF4F46E5),
+    status: 'Live',
+    browserUrl: 'hris.luxesignature.ae',
   ),
   ProjectItem(
     title: 'Excel VBA Automation',
@@ -375,10 +390,10 @@ class _ScreenshotState extends State<_Screenshot>
       final images = _images;
       final img = images[_index];
       return Container(
-        height: 360,
+        height: 384,
         color: AppTheme.bgLight,
         child: Stack(
-          alignment: Alignment.center,
+          alignment: const Alignment(0, -0.22),
           children: [
             _PhoneMockup(
               accentColor: widget.project.accentColor,
@@ -401,7 +416,7 @@ class _ScreenshotState extends State<_Screenshot>
             // Dot indicators below phone
             if (images.length > 1)
               Positioned(
-                bottom: 10,
+                bottom: 16,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(images.length, (i) {
@@ -428,7 +443,8 @@ class _ScreenshotState extends State<_Screenshot>
 
     final images = _images;
     final img = images[_index];
-    final url = _index < _urls.length ? _urls[_index] : _urls[0];
+    final url = widget.project.browserUrl ??
+        (_index < _urls.length ? _urls[_index] : _urls[0]);
 
     return SizedBox(
       height: 360,

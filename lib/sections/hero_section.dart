@@ -503,7 +503,7 @@ class _OutlineBtnState extends State<_OutlineBtn> {
 
 void _downloadCV() {
   final anchor =
-      html.AnchorElement(href: 'assets/FULL_TABINAS_CV.pdf')
+      html.AnchorElement(href: 'Krystler_John_Tabinas_CV.pdf')
         ..setAttribute('download', 'Krystler_John_Tabinas_CV.pdf')
         ..style.display = 'none';
   html.document.body!.append(anchor);
