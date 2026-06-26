@@ -52,11 +52,16 @@ const _projects = [
         'An all-in-one platform for UAE property managers. Features automatic rent collection, '
         'digital tenant onboarding, contract management, and real-time property analytics — '
         'built to streamline Luxe Signature Holiday Homes operations.',
-    image: 'assets/images/luxe_pm.png',
-    imageAlt: 'assets/images/luxe_pm_dashboard.png',
+    image: 'assets/images/cover_luxepm.png',
+    imageAlt: 'assets/images/luxe_pm.png',
+    extraImages: [
+      'assets/images/luxe_pm_dashboard.png',
+    ],
     tags: ['HTML/CSS/JS', 'Supabase', 'Cloudflare', 'Real Estate', 'UAE'],
     accentColor: Color(0xFF00D4FF),
     status: 'Live',
+    browserUrl: 'luxe-pm.app',
+    imageLabels: ['Overview', 'Login', 'Dashboard'],
   ),
   ProjectItem(
     title: 'Luxe HRIS',
@@ -65,9 +70,10 @@ const _projects = [
         'A complete HRIS built from scratch for Luxe Signature. Handles employee records, '
         'biometric attendance sync, leave and cash-advance requests, approval workflows, '
         'payroll, and recruitment — with role-based dashboards and self-service for every employee.',
-    image: 'assets/images/hris_dashboard.jpg',
-    imageAlt: 'assets/images/hris_attendance.jpg',
+    image: 'assets/images/cover_hris.png',
+    imageAlt: 'assets/images/hris_dashboard.jpg',
     extraImages: [
+      'assets/images/hris_attendance.jpg',
       'assets/images/hris_requests.jpg',
       'assets/images/hris_profile.jpg',
     ],
@@ -75,7 +81,7 @@ const _projects = [
     accentColor: Color(0xFF4F46E5),
     status: 'Live',
     browserUrl: 'hris.luxesignature.ae',
-    imageLabels: ['Dashboard', 'Attendance', 'Requests', 'Profile'],
+    imageLabels: ['Overview', 'Dashboard', 'Attendance', 'Requests', 'Profile'],
   ),
   ProjectItem(
     title: 'Excel VBA Automation',
@@ -98,7 +104,8 @@ const _projects = [
         'Two Flutter apps built for GC&C Group of Companies under Cleverminds Digital Solutions Inc. '
         'LuvPark lets operators manage parking slots in real time, while LuvPay is the consumer-facing '
         'app — find a space, book it, and pay cashlessly, all in one flow.',
-    image: 'assets/images/luvpark.png',
+    image: 'assets/images/cover_luvpark.png',
+    imageAlt: 'assets/images/luvpark.png',
     extraImages: [
       'assets/images/luvpark1.png',
       'assets/images/luvpark3.png',
@@ -267,23 +274,20 @@ class _ProjectCardState extends State<_ProjectCard>
                             project: widget.project, hovered: _hovered),
                       ],
                     )
-                  : IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            flex: 6,
-                            child:
-                                _Screenshot(project: widget.project),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: _Info(
-                                project: widget.project,
-                                hovered: _hovered),
-                          ),
-                        ],
-                      ),
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: _Screenshot(project: widget.project),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: _Info(
+                              project: widget.project,
+                              hovered: _hovered),
+                        ),
+                      ],
                     ),
             ),
           ),
