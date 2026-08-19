@@ -60,8 +60,11 @@ class PortfolioData {
     'n8n',
     'Power Platform',
     'Flutter',
+    'React Native',
+    'Expo',
     'Python',
     'JavaScript',
+    'TypeScript',
     'Power BI',
   ];
 

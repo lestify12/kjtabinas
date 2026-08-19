@@ -42,6 +42,9 @@ Then upload the `build/web/` folder to any static host (Netlify, Vercel, GitHub 
 - **Skills** — Tech skill chips + expertise list with scroll-trigger stagger animations
 - **Experience** — Alternating left/right timeline cards, 7 roles across Philippines & UAE
 - **Education** — Flip-in education cards + training/achievement cards
+- **Projects** — 3D tilt cards with auto-advancing screenshot carousels (browser
+  mockup for web apps, device-framed screens for mobile apps, code panel for
+  script projects)
 - **Contact** — CTA footer with email, phone, location cards
 
 ## Customize

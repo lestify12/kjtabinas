@@ -21,6 +21,12 @@ class ProjectItem {
   final Color accentColor;
   final String status;
   final bool isMobileApp;
+  /// True when the screenshots already ship inside a rendered device frame, so
+  /// the site must not wrap them in its own phone shell a second time.
+  final bool hasDeviceFrame;
+  /// True when the first slide is a wide marketing banner rather than a screen,
+  /// so it fills the panel instead of being letterboxed with the phone shots.
+  final bool bannerCover;
   final bool isCodeProject;
   final String? liveUrl;
   final String? browserUrl;
@@ -37,6 +43,8 @@ class ProjectItem {
     required this.accentColor,
     required this.status,
     this.isMobileApp = false,
+    this.hasDeviceFrame = false,
+    this.bannerCover = false,
     this.isCodeProject = false,
     this.liveUrl,
     this.browserUrl,
@@ -45,6 +53,38 @@ class ProjectItem {
 }
 
 const _projects = [
+  ProjectItem(
+    title: 'Maal',
+    subtitle: 'Offline-First Budget Tracker for the Gulf',
+    description:
+        'A personal finance app built for how money actually moves in the Gulf. Tracks '
+        'multi-currency accounts and net worth, pace-aware budgets, savings goals, and '
+        'BNPL and loan installments — with full Arabic RTL, a 50+ GCC bank catalog, and '
+        'IBAN validation. Everything lives in on-device SQLite: no account, no server, '
+        'no analytics.',
+    image: 'assets/images/cover_maal.jpg',
+    imageAlt: 'assets/images/maal_dashboard.png',
+    extraImages: [
+      'assets/images/maal_wallet.png',
+      'assets/images/maal_budget.png',
+      'assets/images/maal_goals.png',
+      'assets/images/maal_installments.png',
+    ],
+    tags: ['React Native', 'Expo', 'TypeScript', 'SQLite', 'Offline-First', 'UAE / GCC'],
+    accentColor: Color(0xFF0A2C63),
+    status: 'In Development',
+    isMobileApp: true,
+    hasDeviceFrame: true,
+    bannerCover: true,
+    imageLabels: [
+      'Overview',
+      'Dashboard',
+      'Wallet',
+      'Budget',
+      'Goals',
+      'Installments',
+    ],
+  ),
   ProjectItem(
     title: 'Luxe PM',
     subtitle: 'Property Management Platform',
@@ -64,24 +104,24 @@ const _projects = [
     imageLabels: ['Overview', 'Login', 'Dashboard'],
   ),
   ProjectItem(
-    title: 'Luxe HRIS',
+    title: 'HRIS',
     subtitle: 'Human Resource Information System',
     description:
-        'A complete HRIS built from scratch for Luxe Signature. Handles employee records, '
-        'biometric attendance sync, leave and cash-advance requests, approval workflows, '
-        'payroll, and recruitment — with role-based dashboards and self-service for every employee.',
-    image: 'assets/images/cover_hris.png',
+        'A complete HRIS built from scratch. Handles employee records, biometric '
+        'attendance sync, leave and cash-advance requests, approval workflows, payroll, '
+        'and recruitment — with role-based dashboards and self-service for every employee.',
+    image: 'assets/images/cover_hris.jpg',
     imageAlt: 'assets/images/hris_dashboard.jpg',
     extraImages: [
-      'assets/images/hris_attendance.jpg',
-      'assets/images/hris_requests.jpg',
+      'assets/images/hris_directory.jpg',
+      'assets/images/hris_approvals.jpg',
       'assets/images/hris_profile.jpg',
     ],
     tags: ['Web App', 'Supabase', 'Workflow Automation', 'Biometric Sync', 'UAE'],
     accentColor: Color(0xFF4F46E5),
     status: 'Live',
     browserUrl: 'hris.luxesignature.ae',
-    imageLabels: ['Overview', 'Dashboard', 'Attendance', 'Requests', 'Profile'],
+    imageLabels: ['Overview', 'Dashboard', 'Directory', 'Approvals', 'Profile'],
   ),
   ProjectItem(
     title: 'Excel VBA Automation',
@@ -393,6 +433,61 @@ class _ScreenshotState extends State<_Screenshot>
               )),
             ],
           ),
+        ),
+      );
+    }
+
+    // Screenshots that already ship inside a device frame — show them as-is,
+    // no second phone shell around them.
+    if (widget.project.hasDeviceFrame) {
+      final images = _images;
+      final isBanner = widget.project.bannerCover && _index == 0;
+      return Container(
+        height: 384,
+        color: AppTheme.bgLight,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Padding(
+                padding: isBanner
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.fromLTRB(24, 14, 24, 34),
+                child: FadeTransition(
+                  opacity: _fade,
+                  child: Image.asset(
+                    images[_index],
+                    fit: isBanner ? BoxFit.cover : BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Icon(Icons.smartphone_rounded,
+                          size: 48, color: widget.project.accentColor),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (images.length > 1)
+              Positioned(
+                bottom: 14,
+                left: 0,
+                right: 0,
+                child: _DotRow(
+                  count: images.length,
+                  index: _index,
+                  activeColor: isBanner
+                      ? Colors.white
+                      : widget.project.accentColor,
+                  inactiveColor: isBanner
+                      ? Colors.white.withValues(alpha: 0.45)
+                      : AppTheme.textLight.withValues(alpha: 0.4),
+                ),
+              ),
+            if (widget.project.imageLabels.length > _index)
+              Positioned(
+                bottom: 10,
+                right: 14,
+                child: _LabelChip(widget.project.imageLabels[_index]),
+              ),
+          ],
         ),
       );
     }
@@ -734,6 +829,63 @@ class _PhoneMockup extends StatelessWidget {
       ],
     );
   }
+}
+
+class _DotRow extends StatelessWidget {
+  final int count;
+  final int index;
+  final Color activeColor;
+  final Color? inactiveColor;
+  const _DotRow({
+    required this.count,
+    required this.index,
+    required this.activeColor,
+    this.inactiveColor,
+  });
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(count, (i) {
+          final active = i == index;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            width: active ? 20 : 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: active
+                  ? activeColor
+                  : (inactiveColor ??
+                      AppTheme.textLight.withValues(alpha: 0.4)),
+              borderRadius: BorderRadius.circular(3),
+            ),
+          );
+        }),
+      );
+}
+
+class _LabelChip extends StatelessWidget {
+  final String label;
+  const _LabelChip(this.label);
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppTheme.bgCream.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.border),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            color: AppTheme.textGray,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
 }
 
 class _Dot extends StatelessWidget {
