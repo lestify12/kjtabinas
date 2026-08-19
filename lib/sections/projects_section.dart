@@ -34,6 +34,7 @@ class ProjectItem {
   final String title;
   final String subtitle;
   final String description;
+
   /// Extra context shown under the description — e.g. why a build stopped.
   final String? note;
   final String image;
@@ -44,12 +45,17 @@ class ProjectItem {
   final Color accentColor;
   final String status;
   final bool isMobileApp;
+
   /// True when the screenshots already ship inside a rendered device frame, so
   /// the site must not wrap them in its own phone shell a second time.
   final bool hasDeviceFrame;
+
   /// True when the first slide is a wide marketing banner rather than a screen,
   /// so it fills the panel instead of being letterboxed with the phone shots.
   final bool bannerCover;
+  /// Colour to sit behind a letterboxed banner cover, sampled from the banner's
+  /// own edges so the bars read as part of the artwork rather than as padding.
+  final Color? coverBackdrop;
   final String? liveUrl;
   final String? browserUrl;
   final List<String> imageLabels;
@@ -69,6 +75,7 @@ class ProjectItem {
     this.isMobileApp = false,
     this.hasDeviceFrame = false,
     this.bannerCover = false,
+    this.coverBackdrop,
     this.liveUrl,
     this.browserUrl,
     this.imageLabels = const [],
@@ -106,6 +113,7 @@ const _projects = [
     isMobileApp: true,
     hasDeviceFrame: true,
     bannerCover: true,
+    coverBackdrop: Color(0xFF000C27),
     imageLabels: [
       'Overview',
       'Dashboard',
@@ -225,7 +233,13 @@ const _projects = [
       'assets/images/hris_approvals.jpg',
       'assets/images/hris_profile.jpg',
     ],
-    tags: ['Web App', 'Supabase', 'Workflow Automation', 'Biometric Sync', 'UAE'],
+    tags: [
+      'Web App',
+      'Supabase',
+      'Workflow Automation',
+      'Biometric Sync',
+      'UAE'
+    ],
     languages: [
       Lang('JavaScript', 63.6),
       Lang('TypeScript', 32.9),
@@ -249,8 +263,8 @@ class ProjectsSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: AppTheme.bgWhite,
-      padding: EdgeInsets.symmetric(
-          horizontal: isNarrow ? 24 : 80, vertical: 80),
+      padding:
+          EdgeInsets.symmetric(horizontal: isNarrow ? 24 : 80, vertical: 80),
       child: SectionWrapper(
         sectionKey: 'projects',
         child: Column(
@@ -377,8 +391,7 @@ class _ProjectCardState extends State<_ProjectCard>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: accentColor.withValues(
-                      alpha: _hovered ? 0.18 : 0.05),
+                  color: accentColor.withValues(alpha: _hovered ? 0.18 : 0.05),
                   blurRadius: _hovered ? 50 : 15,
                   offset: const Offset(0, 8),
                 ),
@@ -391,9 +404,9 @@ class _ProjectCardState extends State<_ProjectCard>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _Screenshot(project: widget.project),
-                        _Info(
-                            project: widget.project, hovered: _hovered),
+                        _Screenshot(
+                            project: widget.project, isNarrow: widget.isNarrow),
+                        _Info(project: widget.project, hovered: _hovered),
                       ],
                     )
                   : Row(
@@ -405,9 +418,8 @@ class _ProjectCardState extends State<_ProjectCard>
                         ),
                         Expanded(
                           flex: 4,
-                          child: _Info(
-                              project: widget.project,
-                              hovered: _hovered),
+                          child:
+                              _Info(project: widget.project, hovered: _hovered),
                         ),
                       ],
                     ),
@@ -415,14 +427,8 @@ class _ProjectCardState extends State<_ProjectCard>
           ),
         ),
       ),
-    )
-        .animate()
-        .fadeIn(duration: 700.ms)
-        .slideY(
-            begin: 0.1,
-            end: 0,
-            duration: 700.ms,
-            curve: Curves.easeOutCubic);
+    ).animate().fadeIn(duration: 700.ms).slideY(
+        begin: 0.1, end: 0, duration: 700.ms, curve: Curves.easeOutCubic);
   }
 }
 
@@ -430,7 +436,8 @@ class _ProjectCardState extends State<_ProjectCard>
 
 class _Screenshot extends StatefulWidget {
   final ProjectItem project;
-  const _Screenshot({required this.project});
+  final bool isNarrow;
+  const _Screenshot({required this.project, this.isNarrow = false});
 
   @override
   State<_Screenshot> createState() => _ScreenshotState();
@@ -468,6 +475,20 @@ class _ScreenshotState extends State<_Screenshot>
     _fadeCtrl
       ..value = 0
       ..forward();
+  }
+
+  /// Wraps a panel so a horizontal flick steps through the slides. Vertical
+  /// drags are untouched, so the page still scrolls normally.
+  Widget _swipeable(Widget child) {
+    if (_images.length < 2) return child;
+    return GestureDetector(
+      onHorizontalDragEnd: (d) {
+        final v = d.primaryVelocity ?? 0;
+        if (v.abs() < 100) return;
+        _goTo(_index + (v < 0 ? 1 : -1));
+      },
+      child: child,
+    );
   }
 
   /// Prev/next affordances pinned to the sides of the screenshot panel.
@@ -522,16 +543,25 @@ class _ScreenshotState extends State<_Screenshot>
       final images = _images;
       final isBanner = widget.project.bannerCover && _index == 0;
       final framed = widget.project.hasDeviceFrame;
+      final backdrop = widget.project.coverBackdrop;
+      // Dots and arrows go light when they sit on the artwork (wide, where the
+      // banner fills the panel) or on a dark backdrop behind a letterboxed one.
+      final onDark = isBanner &&
+          (!widget.isNarrow ||
+              (backdrop != null && backdrop.computeLuminance() < 0.4));
 
       final Widget shot = FadeTransition(
         opacity: _fade,
         child: Image.asset(
           images[_index],
           fit: isBanner
-              ? BoxFit.cover
+              // A 16:9 banner inside a near-square phone panel loses ~65% of its
+              // width to BoxFit.cover — the wordmark goes with it.
+              ? (widget.isNarrow ? BoxFit.contain : BoxFit.cover)
               : (framed ? BoxFit.contain : BoxFit.cover),
-          alignment:
-              (isBanner || framed) ? Alignment.center : const Alignment(0, -0.78),
+          alignment: (isBanner || framed)
+              ? Alignment.center
+              : const Alignment(0, -0.78),
           errorBuilder: (_, __, ___) => Center(
             child: Icon(Icons.smartphone_rounded,
                 size: 48, color: widget.project.accentColor),
@@ -539,9 +569,9 @@ class _ScreenshotState extends State<_Screenshot>
         ),
       );
 
-      return Container(
+      return _swipeable(Container(
         height: 384,
-        color: AppTheme.bgLight,
+        color: isBanner ? (backdrop ?? AppTheme.bgLight) : AppTheme.bgLight,
         child: Stack(
           alignment: const Alignment(0, -0.22),
           children: [
@@ -559,7 +589,7 @@ class _ScreenshotState extends State<_Screenshot>
                 accentColor: widget.project.accentColor,
                 child: shot,
               ),
-            if (images.length > 1) ..._arrows(images.length, light: isBanner),
+            if (images.length > 1) ..._arrows(images.length, light: onDark),
             if (images.length > 1)
               Positioned(
                 bottom: 14,
@@ -570,8 +600,8 @@ class _ScreenshotState extends State<_Screenshot>
                   index: _index,
                   onTap: _goTo,
                   activeColor:
-                      isBanner ? Colors.white : widget.project.accentColor,
-                  inactiveColor: isBanner
+                      onDark ? Colors.white : widget.project.accentColor,
+                  inactiveColor: onDark
                       ? Colors.white.withValues(alpha: 0.45)
                       : AppTheme.textLight.withValues(alpha: 0.4),
                 ),
@@ -584,7 +614,7 @@ class _ScreenshotState extends State<_Screenshot>
               ),
           ],
         ),
-      );
+      ));
     }
 
     final images = _images;
@@ -592,8 +622,8 @@ class _ScreenshotState extends State<_Screenshot>
     final url = widget.project.browserUrl ??
         (_index < _urls.length ? _urls[_index] : _urls[0]);
 
-    return SizedBox(
-      height: 360,
+    return _swipeable(SizedBox(
+      height: widget.isNarrow ? 250 : 360,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -713,7 +743,7 @@ class _ScreenshotState extends State<_Screenshot>
             ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -950,29 +980,35 @@ class _ArrowButton extends StatelessWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: onTap,
+          behavior: HitTestBehavior.opaque,
           child: Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: light
-                  ? Colors.white.withValues(alpha: 0.22)
-                  : AppTheme.bgCream.withValues(alpha: 0.92),
-              border: Border.all(
+            alignment: Alignment.center,
+            width: 44,
+            height: 44,
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
                 color: light
-                    ? Colors.white.withValues(alpha: 0.55)
-                    : AppTheme.border,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                    ? Colors.white.withValues(alpha: 0.22)
+                    : AppTheme.bgCream.withValues(alpha: 0.92),
+                border: Border.all(
+                  color: light
+                      ? Colors.white.withValues(alpha: 0.55)
+                      : AppTheme.border,
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(icon,
+                  size: 22, color: light ? Colors.white : AppTheme.textBlack),
             ),
-            child: Icon(icon,
-                size: 22, color: light ? Colors.white : AppTheme.textBlack),
           ),
         ),
       );
@@ -1034,8 +1070,7 @@ class _Info extends StatelessWidget {
         children: [
           // Live badge
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: badge.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
@@ -1137,12 +1172,10 @@ class _Info extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: project.accentColor
-                            .withValues(alpha: 0.07),
+                        color: project.accentColor.withValues(alpha: 0.07),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: project.accentColor
-                              .withValues(alpha: 0.2),
+                          color: project.accentColor.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Text(
@@ -1161,8 +1194,7 @@ class _Info extends StatelessWidget {
 
           Row(
             children: [
-              Icon(Icons.lock_outline,
-                  size: 13, color: AppTheme.textLight),
+              Icon(Icons.lock_outline, size: 13, color: AppTheme.textLight),
               const SizedBox(width: 6),
               Text(
                 'Private Repository',
@@ -1179,7 +1211,8 @@ class _Info extends StatelessWidget {
             GestureDetector(
               onTap: () => html.window.open(project.liveUrl!, '_blank'),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: project.accentColor.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(100),
