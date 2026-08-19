@@ -66,12 +66,12 @@ they run on, end to end and mostly on my own.
 > Repositories for these are private. Screens, write-ups and the full case studies
 > are on **[kjtabinas.online](https://kjtabinas.online)**.
 
-## GitHub
+## Currently
 
-<div align="center">
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=lestify12&show_icons=true&hide_border=true&title_color=0A2C63&icon_color=C9A227&text_color=444444&bg_color=00000000">
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=lestify12&layout=compact&hide_border=true&title_color=0A2C63&text_color=444444&bg_color=00000000">
-</div>
+- Building **Maal** — offline-first budget tracking built around how money moves in the Gulf
+- Keeping the property management and HRIS platforms running in production
+- Automating operations end to end with Claude Code, MCP and n8n
+- Open to conversations about automation, internal tooling and mobile work in the UAE
 
 <br>
 
