@@ -73,9 +73,23 @@ they run on, end to end and mostly on my own.
 - Automating operations end to end with Claude Code, MCP and n8n
 - Open to conversations about automation, internal tooling and mobile work in the UAE
 
-<br>
+## Connect with me
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/kjtabinas/">
+    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+  </a>
+  <a href="https://www.facebook.com/kjtabinas">
+    <img src="https://img.shields.io/badge/Facebook-0866FF?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook">
+  </a>
+  <a href="mailto:krystlertabinas1999@gmail.com">
+    <img src="https://img.shields.io/badge/Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email">
+  </a>
+  <a href="https://kjtabinas.online">
+    <img src="https://img.shields.io/badge/Portfolio-0A2C63?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Portfolio">
+  </a>
+</p>
 
 <div align="center">
-  <sub>Built things that shipped. Happy to talk about any of them —
-  <a href="mailto:krystlertabinas1999@gmail.com">get in touch</a>.</sub>
+  <sub>Built things that shipped. Happy to talk about any of them.</sub>
 </div>
