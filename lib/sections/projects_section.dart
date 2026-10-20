@@ -92,6 +92,10 @@ const _projects = [
         'BNPL and loan installments — with full Arabic RTL, a 50+ GCC bank catalog, and '
         'IBAN validation. Everything lives in on-device SQLite: no account, no server, '
         'no analytics.',
+    note:
+        'Discontinued. Maal is no longer being developed or maintained. It stays in '
+        'the portfolio because the product work is worth showing: every screen here '
+        'is designed, built and working.',
     image: 'assets/images/cover_maal.jpg',
     imageAlt: 'assets/images/maal_dashboard.png',
     extraImages: [
@@ -109,7 +113,7 @@ const _projects = [
       Lang('Swift', 0.5),
     ],
     accentColor: Color(0xFF0A2C63),
-    status: 'Live',
+    status: 'Discontinued',
     isMobileApp: true,
     hasDeviceFrame: true,
     bannerCover: true,
