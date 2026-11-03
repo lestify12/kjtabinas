@@ -60,6 +60,7 @@ they run on, end to end and mostly on my own.
 | :--- | :--- | :--- | :--- |
 | **Maal** | Offline-first budget tracker for the Gulf — multi-currency accounts, pace-aware budgets, savings goals and installment tracking. Arabic RTL, 50+ GCC banks, IBAN validation, everything on-device. | React&nbsp;Native · Expo · SQLite | ⚪ Discontinued |
 | **Property Management System** | All-in-one platform for UAE property managers — 412 units across 68 properties. Leases, tenants, landlords, agents, rent collection, invoicing, approvals, maintenance and income reporting. | HTML/JS · Supabase · Cloudflare | 🟢 Live |
+| **Long-Term Lease System** | Third book of the property platform for annual letting — tenancy contracts generated with their cheque schedule, a cheque register tracking every post-dated cheque through cleared or bounced, renewal reminders four months out, Ejari and an owner portal. | HTML/JS · Supabase · Cloudflare | 🟢 Live |
 | **HRIS** | Full HR system built from scratch — employee records, biometric attendance sync, leave and cash-advance workflows, payroll, recruitment and self-service. | JS/TS · Supabase | 🟢 Live |
 | **Waggo** | Pet-care marketplace — pet profiles, verified sitters, bookings from walk to handover. | React&nbsp;Native · Expo · Supabase | ⚪ Discontinued |
 
