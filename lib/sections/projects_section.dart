@@ -234,21 +234,6 @@ const _projects = [
         'contract PDF, which the tenant signs through a secure link. A lease tracker then '
         'walks each tenancy from contract drafted, to Ejari registered, to payments '
         'collected, to signed contract on file.',
-    note:
-        'Cheque monitoring — a cheque register tracks every cheque from pending through '
-        'deposited, cleared, bounced, on hold or replaced; clearing posts the payment, a '
-        'bounce keeps the invoice open and links its replacement, and the dashboard flags '
-        'deposits due in the next 30 days (reminder 5 days before) and returned cheques not '
-        'yet replaced. Renewal monitoring — a renewal register raises each contract 4 '
-        'months before expiry, runs the 90-day notice clock, records the tenant\'s '
-        'response, and renews into a fresh term with its own unsigned contract while '
-        'keeping full term history. Also: a live notification bell across leases, '
-        'invoices, cheques and payments; an internal contract with its own cheque run; '
-        'Ejari certificates, title deeds, trade licence, ID documents and DEWA / chiller '
-        'accounts on file; invoices, payments, security deposits, tenant and landlord '
-        'ledgers, owner payouts and PDF reporting; and a long-term owner portal where '
-        'landlords follow their units, cheques clearing in the next 30 days, upcoming '
-        'renewals and their statement.',
     image: 'assets/images/cover_longterm.jpg',
     imageAlt: 'assets/images/lt_cheques.jpg',
     extraImages: [
