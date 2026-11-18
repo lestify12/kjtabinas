@@ -180,14 +180,14 @@ const _projects = [
         'contract PDF, which the tenant signs through a secure link. A lease tracker then '
         'walks each tenancy from contract drafted, to Ejari registered, to payments '
         'collected, to signed contract on file.',
-    image: 'assets/images/cover_longterm.jpg',
-    imageAlt: 'assets/images/lt_cheques.jpg',
+    image: 'assets/images/lt_dashboard.jpg',
+    imageAlt: 'assets/images/lt_properties.jpg',
     extraImages: [
-      'assets/images/lt_lease_detail.jpg',
-      'assets/images/lt_invoices.jpg',
-      'assets/images/lt_landlords.jpg',
-      'assets/images/lt_property.jpg',
+      'assets/images/lt_leases.jpg',
+      'assets/images/lt_tenancy.jpg',
+      'assets/images/lt_landlord.jpg',
     ],
+    aspect: 4 / 3,
     tags: ['Supabase', 'Cloudflare', 'Long-Term Leasing', 'Real Estate', 'UAE'],
     languages: [
       Lang('HTML', 85.1),
@@ -198,12 +198,11 @@ const _projects = [
     status: 'Live',
     browserUrl: 'luxepm.online',
     imageLabels: [
-      'Overview',
-      'Cheques',
-      'Tenancy',
-      'Invoices',
-      'Landlords',
-      'Property',
+      'Dashboard',
+      'Properties',
+      'All leases',
+      'Tenancy detail',
+      'Landlord',
     ],
   ),
   ProjectItem(
