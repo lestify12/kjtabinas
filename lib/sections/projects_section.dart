@@ -126,13 +126,12 @@ const _projects = [
         'Covers properties, leases, tenants, landlords and agents, with automated rent '
         'collection, invoicing, approval workflows, maintenance tracking, commission and '
         'income reporting, and real-time portfolio analytics.',
-    image: 'assets/images/pm_unit_history.jpg',
-    imageAlt: 'assets/images/pm_add_term.jpg',
+    image: 'assets/images/pm_signin.jpg',
+    imageAlt: 'assets/images/pm_login.jpg',
     extraImages: [
-      'assets/images/pm_tenant_payments.jpg',
-      'assets/images/pm_transfer_sublease.jpg',
-      'assets/images/pm_sublease_dashboard.jpg',
-      'assets/images/pm_owner_statement.jpg',
+      'assets/images/pm_dashboard.jpg',
+      'assets/images/pm_properties.jpg',
+      'assets/images/pm_leases.jpg',
     ],
     aspect: 4 / 3,
     tags: ['Supabase', 'Cloudflare', 'Real Estate', 'UAE'],
@@ -145,12 +144,11 @@ const _projects = [
     status: 'Live',
     browserUrl: 'luxe-pm.app',
     imageLabels: [
-      'Unit and contract history',
-      'Add contract term',
-      'Tenant payments',
-      'Transfer to sublease',
-      'Sublease dashboard',
-      'Owner statement',
+      'Sign in',
+      'Welcome back',
+      'Dashboard',
+      'Properties',
+      'All leases',
     ],
   ),
   ProjectItem(
