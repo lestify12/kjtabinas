@@ -630,26 +630,6 @@ class _BackdropPainter extends CustomPainter {
     glow(Offset(w * 0.52, h * 0.98), w * 0.34,
         const Color(0xFFCDEBDF).withValues(alpha: 0.55));
 
-    // Two faint arch outlines, bottom-left and top-right.
-    final line = Paint()
-      ..color = const Color(0xFFD5DBD8)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-
-    final aw = (w * 0.16).clamp(120.0, 260.0);
-    final bl = RRect.fromRectAndCorners(
-      Rect.fromLTWH(w * 0.02, h * 0.58, aw, h * 0.6),
-      topLeft: Radius.circular(aw / 2),
-      topRight: Radius.circular(aw / 2),
-    );
-    canvas.drawRRect(bl, line);
-
-    final tr = RRect.fromRectAndCorners(
-      Rect.fromLTWH(w * 0.86, -h * 0.25, aw * 1.1, h * 0.58),
-      bottomLeft: Radius.circular(aw * 0.55),
-      bottomRight: Radius.circular(aw * 0.55),
-    );
-    canvas.drawRRect(tr, line);
   }
 
   @override
