@@ -96,10 +96,9 @@ const _projects = [
         'rental, and car financing that shows real profit per vehicle after the bank. '
         'Role-based access for owners, branch managers, agents, accountants and fleet '
         'managers, with reports and results per branch or across the whole company.',
-    image: 'assets/images/cover_fleeto.jpg',
-    imageAlt: 'assets/images/fleeto_dashboard.jpg',
+    image: 'assets/images/fleeto_dashboard.jpg',
+    imageAlt: 'assets/images/fleeto_reservations.jpg',
     extraImages: [
-      'assets/images/fleeto_reservations.jpg',
       'assets/images/fleeto_fleet.jpg',
       'assets/images/fleeto_payments.jpg',
       'assets/images/fleeto_contracts.jpg',
@@ -110,7 +109,6 @@ const _projects = [
     liveUrl: 'https://fleeto.digital',
     browserUrl: 'fleeto.digital',
     imageLabels: [
-      'Overview',
       'Dashboard',
       'Reservations',
       'Fleet',
