@@ -799,46 +799,26 @@ class _AvailableBadge extends StatelessWidget {
   }
 }
 
-// ─── The systems strip: a slow ticker of the systems I have built ─────────
+// ─── The systems strip: a still row of the systems I have built ─────────────
 
-class _LogoStrip extends StatefulWidget {
+class _LogoStrip extends StatelessWidget {
   final VoidCallback onTap;
   final double logoHeight;
-  final bool wrap; // kept for call sites; the strip always runs
+  final bool wrap;
   const _LogoStrip(
       {required this.onTap, required this.logoHeight, this.wrap = false});
-
-  @override
-  State<_LogoStrip> createState() => _LogoStripState();
-}
-
-class _LogoStripState extends State<_LogoStrip>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl =
-      AnimationController(vsync: this, duration: const Duration(seconds: 28))
-        ..repeat();
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final items = [
       for (final l in _logos)
-        Padding(
-          padding: EdgeInsets.only(right: widget.logoHeight * 2.2),
-          child: _LogoTile(
-              logo: l, height: widget.logoHeight * l.height, onTap: widget.onTap),
-        ),
+        _LogoTile(logo: l, height: logoHeight * l.height, onTap: onTap),
     ];
-    final doubled = [...items, ...items];
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: widget.wrap ? 26 : 0),
+      padding: EdgeInsets.symmetric(
+          vertical: wrap ? 26 : 0, horizontal: wrap ? 20 : 48),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.55),
         border: const Border(top: BorderSide(color: Color(0xFFE6EAE7))),
@@ -856,37 +836,12 @@ class _LogoStripState extends State<_LogoStrip>
             ),
           ),
           const SizedBox(height: 16),
-          MouseRegion(
-            onEnter: (_) => _ctrl.stop(),
-            onExit: (_) => _ctrl.repeat(),
-            child: SizedBox(
-              height: widget.logoHeight * 1.5,
-              child: ClipRect(
-                child: ShaderMask(
-                  shaderCallback: (r) => const LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Colors.black,
-                      Colors.black,
-                      Colors.transparent
-                    ],
-                    stops: [0, 0.08, 0.92, 1],
-                  ).createShader(r),
-                  blendMode: BlendMode.dstIn,
-                  child: AnimatedBuilder(
-                    animation: _ctrl,
-                    builder: (_, __) => OverflowBox(
-                      alignment: Alignment.centerLeft,
-                      maxWidth: double.infinity,
-                      child: FractionalTranslation(
-                        translation: Offset(-_ctrl.value / 2, 0),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: doubled),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          Wrap(
+            spacing: wrap ? 28 : logoHeight * 2.6,
+            runSpacing: 20,
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: items,
           ),
         ],
       ),
