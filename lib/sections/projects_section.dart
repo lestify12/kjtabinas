@@ -56,6 +56,10 @@ class ProjectItem {
   final String? browserUrl;
   final List<String> imageLabels;
 
+  /// Width over height of the gallery frame. Browser shots are 16:9; the
+  /// HRIS set was shot at 4:3.
+  final double aspect;
+
   const ProjectItem({
     required this.title,
     required this.subtitle,
@@ -75,6 +79,7 @@ class ProjectItem {
     this.liveUrl,
     this.browserUrl,
     this.imageLabels = const [],
+    this.aspect = 16 / 9,
   });
 }
 
@@ -296,13 +301,14 @@ const _projects = [
         'A complete HRIS built from scratch. Handles employee records, biometric '
         'attendance sync, leave and cash-advance requests, approval workflows, payroll, '
         'and recruitment — with role-based dashboards and self-service for every employee.',
-    image: 'assets/images/cover_hris.jpg',
-    imageAlt: 'assets/images/hris_dashboard.jpg',
+    image: 'assets/images/hris_overview.jpg',
+    imageAlt: 'assets/images/hris_directory.jpg',
     extraImages: [
-      'assets/images/hris_directory.jpg',
+      'assets/images/hris_attendance.jpg',
       'assets/images/hris_approvals.jpg',
-      'assets/images/hris_profile.jpg',
+      'assets/images/hris_leave.jpg',
     ],
+    aspect: 4 / 3,
     tags: [
       'Web App',
       'Supabase',
@@ -319,7 +325,13 @@ const _projects = [
     accentColor: Color(0xFF4F46E5),
     status: 'Live',
     browserUrl: 'hris.luxesignature.ae',
-    imageLabels: ['Overview', 'Dashboard', 'Directory', 'Approvals', 'Profile'],
+    imageLabels: [
+      'HR overview',
+      'Employee directory',
+      'Team attendance',
+      'Approvals',
+      'Leave request',
+    ],
   ),
 ];
 
@@ -636,7 +648,7 @@ class _GalleryState extends State<_Gallery> {
           ClipRRect(
             borderRadius: BorderRadius.circular(14),
             child: AspectRatio(
-              aspectRatio: widget.isNarrow ? 4 / 3 : 16 / 9,
+              aspectRatio: widget.isNarrow ? 4 / 3 : p.aspect,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
