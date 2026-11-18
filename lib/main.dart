@@ -8,6 +8,7 @@ import 'sections/experience_section.dart';
 import 'sections/education_section.dart';
 import 'sections/contact_section.dart';
 import 'widgets/nav_bar.dart';
+import 'widgets/motion.dart';
 
 void main() {
   runApp(const PortfolioApp());
@@ -36,6 +37,7 @@ class PortfolioHome extends StatefulWidget {
 
 class _PortfolioHomeState extends State<PortfolioHome> {
   final ScrollController _scrollCtrl = ScrollController();
+  final ValueNotifier<double> _offset = ValueNotifier<double>(0);
   double _scrollOffset = 0;
 
   // Section keys for scroll-to navigation
@@ -50,13 +52,23 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   void initState() {
     super.initState();
     _scrollCtrl.addListener(() {
-      setState(() => _scrollOffset = _scrollCtrl.offset);
+      final o = _scrollCtrl.offset;
+      _offset.value = o;
+      // The page itself only needs a rebuild when the nav or the
+      // back-to-top button changes state.
+      final was = _scrollOffset;
+      if ((was > 20) != (o > 20) || (was > 400) != (o > 400)) {
+        setState(() => _scrollOffset = o);
+      } else {
+        _scrollOffset = o;
+      }
     });
   }
 
   @override
   void dispose() {
     _scrollCtrl.dispose();
+    _offset.dispose();
     super.dispose();
   }
 
@@ -75,7 +87,9 @@ class _PortfolioHomeState extends State<PortfolioHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgDark,
-      body: Stack(
+      body: ScrollScope(
+        offset: _offset,
+        child: Stack(
         children: [
           // Scrollable content
           SingleChildScrollView(
@@ -161,6 +175,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
               ),
             ),
         ],
+      ),
       ),
     );
   }

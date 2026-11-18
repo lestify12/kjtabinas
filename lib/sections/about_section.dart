@@ -2,213 +2,249 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../data/portfolio_data.dart';
-import '../widgets/section_wrapper.dart';
+import '../widgets/motion.dart';
 
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.of(context).size.width < 768;
+    final w = MediaQuery.of(context).size.width;
+    final isNarrow = w < 900;
 
-    return Container(
-      width: double.infinity,
-      color: AppTheme.bgWhite,
-      padding: EdgeInsets.symmetric(
-          horizontal: isNarrow ? 24 : 80, vertical: 80),
-      child: SectionWrapper(
-        sectionKey: 'about',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SectionLabel(number: '01', title: 'About Me'),
-            isNarrow
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [_Bio(), const SizedBox(height: 40), _Stats()],
-                  )
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(flex: 5, child: _Bio()),
-                      const SizedBox(width: 80),
-                      Expanded(flex: 4, child: _Stats()),
-                    ],
-                  ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Bio extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Bridging\nTechnology\n& Business.',
-          style: GoogleFonts.playfairDisplay(
-            fontSize: 42,
-            fontWeight: FontWeight.w700,
-            fontStyle: FontStyle.italic,
-            color: AppTheme.textBlack,
-            height: 1.15,
-            letterSpacing: -1,
-          ),
-        ),
-        const SizedBox(height: 28),
-        Text(
-          PortfolioData.profileSummary,
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            color: AppTheme.textGray,
-            height: 1.8,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Currently based in Dubai, UAE — building AI agents, workflow automations, and internal '
-          'business systems at Luxe Signature Holiday Homes that streamline real estate operations end-to-end.',
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            color: AppTheme.textGray,
-            height: 1.8,
-          ),
-        ),
-        const SizedBox(height: 32),
-        // Contact info
-        _InfoRow(Icons.email_outlined, PortfolioData.email),
-        const SizedBox(height: 10),
-        _InfoRow(Icons.phone_outlined, PortfolioData.phone),
-        const SizedBox(height: 10),
-        _InfoRow(Icons.location_on_outlined, PortfolioData.location),
-      ],
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  const _InfoRow(this.icon, this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: AppTheme.textLight),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.inter(
-                fontSize: 13, color: AppTheme.textGray),
-          ),
+    return SectionShell(
+      backdrop: [
+        Positioned(
+          right: -w * 0.08,
+          top: 40,
+          child: const ParallaxShift(
+              factor: -0.10, child: Glow(size: 520, color: AppTheme.lilac)),
         ),
       ],
-    );
-  }
-}
-
-class _Stats extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        _StatRow('3+', 'Years of Experience'),
-        _Divider(),
-        _StatRow('5', 'Companies Worked'),
-        _Divider(),
-        _StatRow('2', 'Countries Operated'),
-        _Divider(),
-        const SizedBox(height: 24),
-        Text(
-          'Languages',
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.textLight,
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            _LangChip('English'),
-            const SizedBox(width: 8),
-            _LangChip('Filipino'),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _StatRow extends StatelessWidget {
-  final String value;
-  final String label;
-  const _StatRow(this.value, this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            value,
-            style: GoogleFonts.inter(
-              fontSize: 40,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.textBlack,
-              letterSpacing: -1,
-            ),
+          const SectionHeading(
+            number: '01',
+            label: 'About',
+            title: 'Bridging technology',
+            accent: '& business.',
           ),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: AppTheme.textGray,
-            ),
-          ),
+          const SizedBox(height: 48),
+          isNarrow
+              ? const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [_Bio(), SizedBox(height: 40), _Side()],
+                )
+              : const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 6, child: _Bio()),
+                    SizedBox(width: 72),
+                    Expanded(flex: 5, child: _Side()),
+                  ],
+                ),
         ],
       ),
     );
   }
 }
 
-class _Divider extends StatelessWidget {
+class _Bio extends StatelessWidget {
+  const _Bio();
+
   @override
-  Widget build(BuildContext context) =>
-      const Divider(color: AppTheme.border, height: 1);
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Reveal(
+          index: 2,
+          child: Text(
+            'I build the systems a business actually runs on, and then automate the work around them.',
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              height: 1.45,
+              letterSpacing: -0.4,
+              color: AppTheme.textBlack,
+            ),
+          ),
+        ),
+        const SizedBox(height: 22),
+        Reveal(
+          index: 3,
+          child: Text(PortfolioData.profileSummary, style: AppTheme.body()),
+        ),
+        const SizedBox(height: 14),
+        Reveal(
+          index: 4,
+          child: Text(
+            'Currently based in Dubai, building AI agents, workflow automations and internal '
+            'business systems at Luxe Signature Holiday Homes, and shipping my own products on '
+            'the side.',
+            style: AppTheme.body(),
+          ),
+        ),
+        const SizedBox(height: 32),
+        Reveal(
+          index: 5,
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: const [
+              _InfoPill(Icons.mail_outline_rounded, PortfolioData.email),
+              _InfoPill(Icons.call_outlined, PortfolioData.phone),
+              _InfoPill(Icons.place_outlined, PortfolioData.location),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _LangChip extends StatelessWidget {
-  final String label;
-  const _LangChip(this.label);
+class _InfoPill extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const _InfoPill(this.icon, this.text);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+      padding: const EdgeInsets.fromLTRB(12, 9, 16, 9),
       decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.bgWhite,
         borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: AppTheme.border),
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 13,
-          color: AppTheme.textDark,
-          fontWeight: FontWeight.w500,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: AppTheme.mint),
+          const SizedBox(width: 8),
+          Text(text,
+              style: GoogleFonts.inter(fontSize: 13, color: AppTheme.textDark)),
+        ],
+      ),
+    );
+  }
+}
+
+class _Side extends StatelessWidget {
+  const _Side();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: const [
+            Expanded(child: _Stat(index: 2, end: 3, suffix: '+', label: 'Years building\nsystems')),
+            SizedBox(width: 14),
+            Expanded(child: _Stat(index: 3, end: 6, suffix: '', label: 'Systems built\nend to end')),
+          ],
+        ),
+        const SizedBox(height: 14),
+        Row(
+          children: const [
+            Expanded(child: _Stat(index: 4, end: 412, suffix: '', label: 'Units managed on\nthe PM platform')),
+            SizedBox(width: 14),
+            Expanded(child: _Stat(index: 5, end: 5, suffix: '', label: 'Companies across\ntwo countries')),
+          ],
+        ),
+        const SizedBox(height: 14),
+        Reveal(
+          index: 6,
+          child: Container(
+            padding: const EdgeInsets.all(26),
+            decoration: BoxDecoration(
+              color: AppTheme.textBlack,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: AppTheme.mint),
+                    ),
+                    const SizedBox(width: 10),
+                    Text('NOW', style: AppTheme.eyebrow(color: Colors.white54)),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  'AI Automation Engineer at Luxe Signature Holiday Homes, Dubai. '
+                  'Running the property platform, the HRIS and the automations that connect them.',
+                  style: GoogleFonts.inter(
+                      fontSize: 14.5, height: 1.7, color: Colors.white.withValues(alpha: 0.85)),
+                ),
+                const SizedBox(height: 18),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final l in ['English', 'Filipino'])
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(color: Colors.white24),
+                        ),
+                        child: Text(l,
+                            style: GoogleFonts.inter(
+                                fontSize: 12, color: Colors.white70)),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Stat extends StatelessWidget {
+  final int index;
+  final int end;
+  final String suffix;
+  final String label;
+  const _Stat({required this.index, required this.end, required this.suffix, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Reveal(
+      index: index,
+      scaleFrom: 0.96,
+      child: LiftCard(
+        padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CountUp(
+              end: end,
+              suffix: suffix,
+              style: GoogleFonts.poppins(
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -1.5,
+                height: 1,
+                color: AppTheme.textBlack,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(label,
+                style: GoogleFonts.inter(
+                    fontSize: 12.5, height: 1.45, color: AppTheme.textGray)),
+          ],
         ),
       ),
     );

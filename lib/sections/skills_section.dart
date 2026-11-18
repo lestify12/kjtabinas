@@ -1,60 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
-import '../data/portfolio_data.dart';
-import '../widgets/section_wrapper.dart';
+import '../widgets/motion.dart';
 
 class SkillsSection extends StatelessWidget {
   const SkillsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.of(context).size.width < 768;
+    final w = MediaQuery.of(context).size.width;
+    final cols = w < 700 ? 1 : (w < 1100 ? 2 : 2);
 
-    return Container(
-      width: double.infinity,
-      color: AppTheme.bgCream,
-      padding: EdgeInsets.symmetric(
-          horizontal: isNarrow ? 24 : 80, vertical: 80),
-      child: SectionWrapper(
-        sectionKey: 'skills',
+    return SectionShell(
+      color: AppTheme.paper2,
+      backdrop: [
+        Positioned(
+          left: -w * 0.10,
+          bottom: -80,
+          child: const ParallaxShift(
+              factor: 0.08, child: Glow(size: 560, color: AppTheme.blush, opacity: 0.45)),
+        ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SectionHeading(
+            number: '02',
+            label: 'What I do',
+            title: 'What I can',
+            accent: 'help you with.',
+          ),
+          const SizedBox(height: 48),
+          LayoutBuilder(builder: (context, c) {
+            const gap = 18.0;
+            final cw = (c.maxWidth - gap * (cols - 1)) / cols;
+            return Wrap(
+              spacing: gap,
+              runSpacing: gap,
+              children: [
+                for (var i = 0; i < _areas.length; i++)
+                  SizedBox(width: cw, child: _AreaCard(area: _areas[i], index: i + 2)),
+              ],
+            );
+          }),
+          const SizedBox(height: 72),
+          Reveal(
+            child: Text('TOOLS I REACH FOR', style: AppTheme.eyebrow()),
+          ),
+          const SizedBox(height: 22),
+          const Reveal(index: 1, child: _MarqueeBand(reverse: false)),
+          const SizedBox(height: 12),
+          const Reveal(index: 2, child: _MarqueeBand(reverse: true)),
+        ],
+      ),
+    );
+  }
+}
+
+class _Area {
+  final IconData icon;
+  final String title;
+  final String desc;
+  final List<String> tools;
+  const _Area(this.icon, this.title, this.desc, this.tools);
+}
+
+const _areas = [
+  _Area(
+    Icons.auto_awesome_rounded,
+    'AI agents & automation',
+    'Agents and workflows that take real work off a team: drafting, reconciling, chasing, reporting. Built with Claude Code and MCP, wired into the tools you already use.',
+    ['Claude Code', 'MCP', 'AI Agents', 'n8n', 'Prompt Engineering'],
+  ),
+  _Area(
+    Icons.account_tree_outlined,
+    'Internal business systems',
+    'Property management, HR, approvals, invoicing and reporting, designed around how the office actually operates and shipped to production.',
+    ['Supabase', 'PostgreSQL', 'Cloudflare', 'Role-based access', 'Reporting'],
+  ),
+  _Area(
+    Icons.devices_rounded,
+    'Apps & integrations',
+    'Web and mobile apps with the integrations behind them: REST APIs, webhooks, payment and document flows, offline-first where it matters.',
+    ['Flutter', 'React Native', 'Expo', 'TypeScript', 'REST APIs', 'Webhooks'],
+  ),
+  _Area(
+    Icons.insights_rounded,
+    'Low-code & data',
+    'Fast internal tooling and dashboards on the Microsoft stack, and the spreadsheets and reports that finance still runs on.',
+    ['Power Apps', 'Power Automate', 'Power BI', 'Excel VBA', 'SQL'],
+  ),
+];
+
+class _AreaCard extends StatelessWidget {
+  final _Area area;
+  final int index;
+  const _AreaCard({required this.area, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Reveal(
+      index: index,
+      scaleFrom: 0.97,
+      child: LiftCard(
+        padding: const EdgeInsets.all(30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionLabel(number: '02', title: 'I Can Help You With'),
-            const SizedBox(height: 8),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: AppTheme.mintSoft),
+              child: Icon(area.icon, size: 22, color: AppTheme.mint),
+            ),
+            const SizedBox(height: 22),
             Text(
-              'Experience & Skills',
-              style: GoogleFonts.playfairDisplay(
-                fontSize: isNarrow ? 32 : 46,
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.italic,
+              area.title,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.4,
                 color: AppTheme.textBlack,
-                letterSpacing: -1,
-                height: 1.1,
               ),
             ),
-            const SizedBox(height: 48),
-
-            // Skills table — like the reference
-            _SkillsTable(isNarrow: isNarrow),
-
-            const SizedBox(height: 64),
-
-            // Tech marquee
-            Text(
-              'TECHNOLOGIES',
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.textLight,
-                letterSpacing: 3,
-              ),
+            const SizedBox(height: 10),
+            Text(area.desc, style: AppTheme.body(size: 14.5)),
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [for (final t in area.tools) Pill(t, fill: AppTheme.paper)],
             ),
-            const SizedBox(height: 24),
-            const _MarqueeBand(reverse: false),
-            const SizedBox(height: 12),
-            const _MarqueeBand(reverse: true),
           ],
         ),
       ),
@@ -62,149 +139,7 @@ class SkillsSection extends StatelessWidget {
   }
 }
 
-class _SkillsTable extends StatelessWidget {
-  final bool isNarrow;
-  const _SkillsTable({required this.isNarrow});
-
-  static const _rows = [
-    _SkillRow('2025–Now', 'AI & Automation',
-        ['Claude Code', 'AI Agents', 'MCP', 'Workflow Automation']),
-    _SkillRow('2023–Now', 'API & Integration',
-        ['REST APIs', 'Webhooks', 'n8n', 'OAuth']),
-    _SkillRow('2023–25', 'Low-Code & BI',
-        ['Power Apps', 'Power Automate', 'Power BI', 'Excel VBA']),
-    _SkillRow('2024–25', 'App & Web Dev',
-        ['Flutter', 'Dart', 'JavaScript', 'Supabase']),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: _rows
-          .asMap()
-          .entries
-          .map((e) => _SkillRowWidget(row: e.value, index: e.key))
-          .toList(),
-    );
-  }
-}
-
-class _SkillRow {
-  final String period;
-  final String area;
-  final List<String> tools;
-  const _SkillRow(this.period, this.area, this.tools);
-}
-
-class _SkillRowWidget extends StatefulWidget {
-  final _SkillRow row;
-  final int index;
-  const _SkillRowWidget({required this.row, required this.index});
-
-  @override
-  State<_SkillRowWidget> createState() => _SkillRowWidgetState();
-}
-
-class _SkillRowWidgetState extends State<_SkillRowWidget> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.of(context).size.width < 768;
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        margin: const EdgeInsets.only(bottom: 2),
-        decoration: BoxDecoration(
-          color: _hovered ? AppTheme.bgWhite : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border(
-            bottom: BorderSide(color: AppTheme.border, width: 1),
-          ),
-        ),
-        child: isNarrow
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.row.period,
-                      style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppTheme.textLight,
-                          fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 4),
-                  Text(widget.row.area,
-                      style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.textBlack)),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children:
-                        widget.row.tools.map((t) => _Pill(t)).toList(),
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  SizedBox(
-                    width: 90,
-                    child: Text(widget.row.period,
-                        style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppTheme.textLight,
-                            fontWeight: FontWeight.w500)),
-                  ),
-                  Expanded(
-                    child: Text(widget.row.area,
-                        style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.textBlack)),
-                  ),
-                  Wrap(
-                    spacing: 6,
-                    children:
-                        widget.row.tools.map((t) => _Pill(t)).toList(),
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
-}
-
-class _Pill extends StatelessWidget {
-  final String label;
-  const _Pill(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppTheme.bgCream,
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: AppTheme.border),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 12,
-          color: AppTheme.textGray,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Marquee band ────────────────────────────────────────────────────────────
+// ─── Marquee ─────────────────────────────────────────────────────────────────
 
 class _MarqueeBand extends StatefulWidget {
   final bool reverse;
@@ -216,25 +151,18 @@ class _MarqueeBand extends StatefulWidget {
 
 class _MarqueeBandState extends State<_MarqueeBand>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
+  late final AnimationController _ctrl =
+      AnimationController(vsync: this, duration: const Duration(seconds: 26))
+        ..repeat();
 
   static const _row1 = [
-    'Claude Code', 'AI Agents', 'MCP', 'Workflow Automation',
-    'n8n', 'Prompt Engineering',
+    'Claude Code', 'AI Agents', 'MCP', 'Workflow Automation', 'n8n',
+    'Prompt Engineering', 'Supabase', 'Cloudflare Pages',
   ];
   static const _row2 = [
-    'REST APIs', 'Webhooks', 'Flutter', 'Python',
-    'JavaScript', 'Power BI', 'SQL', 'Supabase',
+    'REST APIs', 'Webhooks', 'Flutter', 'React Native', 'TypeScript',
+    'Python', 'Power BI', 'SQL', 'Next.js',
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 18),
-    )..repeat();
-  }
 
   @override
   void dispose() {
@@ -245,42 +173,47 @@ class _MarqueeBandState extends State<_MarqueeBand>
   @override
   Widget build(BuildContext context) {
     final items = widget.reverse ? _row2 : _row1;
-    // Duplicate list for seamless loop
     final doubled = [...items, ...items];
-
     return SizedBox(
       height: 44,
-      child: AnimatedBuilder(
-        animation: _ctrl,
-        builder: (_, __) {
-          final offset = widget.reverse
-              ? (1 - _ctrl.value)
-              : _ctrl.value;
-          return ClipRect(
-            child: FractionalTranslation(
-              translation: Offset(-offset, 0),
-              child: Row(
-                children: doubled
-                    .map((label) => _MarqueeChip(label))
-                    .toList(),
-              ),
-            ),
-          );
-        },
+      child: ClipRect(
+        child: ShaderMask(
+          shaderCallback: (r) => const LinearGradient(
+            colors: [Colors.transparent, Colors.black, Colors.black, Colors.transparent],
+            stops: [0, 0.06, 0.94, 1],
+          ).createShader(r),
+          blendMode: BlendMode.dstIn,
+          child: AnimatedBuilder(
+            animation: _ctrl,
+            builder: (_, __) {
+              final v = widget.reverse ? 1 - _ctrl.value : _ctrl.value;
+              return OverflowBox(
+                alignment: Alignment.centerLeft,
+                maxWidth: double.infinity,
+                child: FractionalTranslation(
+                  translation: Offset(-v / 2, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [for (final l in doubled) _Chip(l)],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 }
 
-class _MarqueeChip extends StatefulWidget {
+class _Chip extends StatefulWidget {
   final String label;
-  const _MarqueeChip(this.label);
-
+  const _Chip(this.label);
   @override
-  State<_MarqueeChip> createState() => _MarqueeChipState();
+  State<_Chip> createState() => _ChipState();
 }
 
-class _MarqueeChipState extends State<_MarqueeChip> {
+class _ChipState extends State<_Chip> {
   bool _hovered = false;
 
   @override
@@ -295,16 +228,7 @@ class _MarqueeChipState extends State<_MarqueeChip> {
         decoration: BoxDecoration(
           color: _hovered ? AppTheme.textBlack : AppTheme.bgWhite,
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: _hovered ? AppTheme.textBlack : AppTheme.border,
-          ),
-          boxShadow: _hovered ? [] : [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: _hovered ? AppTheme.textBlack : AppTheme.border),
         ),
         child: Text(
           widget.label,

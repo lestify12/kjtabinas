@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
-import '../widgets/section_wrapper.dart';
+import '../widgets/motion.dart';
 // ignore: unused_import
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -332,36 +332,35 @@ class ProjectsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.of(context).size.width < 768;
+    final w = MediaQuery.of(context).size.width;
+    final isNarrow = w < 768;
 
-    return Container(
-      width: double.infinity,
-      color: AppTheme.bgWhite,
-      padding:
-          EdgeInsets.symmetric(horizontal: isNarrow ? 24 : 80, vertical: 80),
-      child: SectionWrapper(
-        sectionKey: 'projects',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SectionLabel(number: '03', title: 'Recent Projects'),
-            Text(
-              "Things I've\nBuilt",
-              style: GoogleFonts.playfairDisplay(
-                fontSize: 46,
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.italic,
-                color: AppTheme.textBlack,
-                letterSpacing: -1,
-                height: 1.15,
-              ),
-            ),
-            const SizedBox(height: 48),
-            ..._projects.map(
-              (p) => _ProjectCard(project: p, isNarrow: isNarrow),
-            ),
-          ],
+    return SectionShell(
+      backdrop: [
+        Positioned(
+          left: -w * 0.12,
+          top: 200,
+          child: const ParallaxShift(
+              factor: -0.06, child: Glow(size: 600, color: AppTheme.lilac, opacity: 0.35)),
         ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SectionHeading(
+            number: '03',
+            label: 'Recent projects',
+            title: 'Things I have',
+            accent: 'built.',
+          ),
+          const SizedBox(height: 48),
+          for (var i = 0; i < _projects.length; i++)
+            Reveal(
+              index: 2,
+              scaleFrom: 0.985,
+              child: _ProjectCard(project: _projects[i], isNarrow: isNarrow),
+            ),
+        ],
       ),
     );
   }

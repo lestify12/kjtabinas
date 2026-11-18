@@ -1,76 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import '../theme/app_theme.dart';
 import '../data/portfolio_data.dart';
-import '../widgets/section_wrapper.dart';
+import '../widgets/motion.dart';
 
 class ExperienceSection extends StatelessWidget {
   const ExperienceSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.of(context).size.width < 768;
+    final w = MediaQuery.of(context).size.width;
+    final isNarrow = w < 800;
 
-    return Container(
-      width: double.infinity,
-      color: AppTheme.bgWhite,
-      padding: EdgeInsets.symmetric(
-          horizontal: isNarrow ? 24 : 80, vertical: 80),
-      child: SectionWrapper(
-        sectionKey: 'experience',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SectionLabel(number: '04', title: 'Work Experience'),
-            Text(
-              'My Professional\nJourney',
-              style: GoogleFonts.playfairDisplay(
-                fontSize: isNarrow ? 32 : 46,
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.italic,
-                color: AppTheme.textBlack,
-                letterSpacing: -1,
-                height: 1.15,
-              ),
-            ),
-            const SizedBox(height: 56),
-            ...PortfolioData.experiences
-                .asMap()
-                .entries
-                .map((e) => _ExpRow(exp: e.value, index: e.key)),
-          ],
+    return SectionShell(
+      backdrop: [
+        Positioned(
+          right: -w * 0.1,
+          top: 120,
+          child: const ParallaxShift(
+              factor: -0.08, child: Glow(size: 520, color: AppTheme.blush, opacity: 0.4)),
         ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SectionHeading(
+            number: '04',
+            label: 'Experience',
+            title: 'Where I have',
+            accent: 'worked.',
+          ),
+          const SizedBox(height: 56),
+          _Timeline(isNarrow: isNarrow),
+        ],
       ),
     );
   }
 }
 
-class _ExpRow extends StatefulWidget {
-  final ExperienceItem exp;
-  final int index;
-  const _ExpRow({required this.exp, required this.index});
+class _Timeline extends StatelessWidget {
+  final bool isNarrow;
+  const _Timeline({required this.isNarrow});
 
   @override
-  State<_ExpRow> createState() => _ExpRowState();
+  Widget build(BuildContext context) {
+    final railX = isNarrow ? 14.0 : 150.0; // where the vertical line sits
+    return ScrollProgress(
+      start: 0.8,
+      end: 0.3,
+      builder: (context, p) => Stack(
+        children: [
+          // The rail, drawn as the reader scrolls.
+          Positioned(
+            left: railX,
+            top: 8,
+            bottom: 8,
+            child: LayoutBuilder(builder: (context, c) {
+              return Stack(
+                children: [
+                  Container(width: 2, height: c.maxHeight, color: AppTheme.border),
+                  Container(
+                    width: 2,
+                    height: c.maxHeight * p,
+                    decoration: BoxDecoration(
+                      color: AppTheme.mint,
+                      boxShadow: [
+                        BoxShadow(color: AppTheme.mint.withValues(alpha: 0.5), blurRadius: 8)
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+          Column(
+            children: [
+              for (var i = 0; i < PortfolioData.experiences.length; i++)
+                _Entry(
+                  exp: PortfolioData.experiences[i],
+                  index: i,
+                  isNarrow: isNarrow,
+                  railX: railX,
+                  reached: p > (i + 0.35) / PortfolioData.experiences.length,
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _ExpRowState extends State<_ExpRow>
-    with SingleTickerProviderStateMixin {
-  bool _expanded = false;
-  bool _visible = false;
-  bool _hovered = false;
-  late AnimationController _ctrl;
-  late Animation<double> _expand;
+class _Entry extends StatefulWidget {
+  final ExperienceItem exp;
+  final int index;
+  final bool isNarrow;
+  final double railX;
+  final bool reached;
+  const _Entry({
+    required this.exp,
+    required this.index,
+    required this.isNarrow,
+    required this.railX,
+    required this.reached,
+  });
 
   @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _expand =
-        CurvedAnimation(parent: _ctrl, curve: Curves.easeInOutCubic);
-  }
+  State<_Entry> createState() => _EntryState();
+}
+
+class _EntryState extends State<_Entry> with SingleTickerProviderStateMixin {
+  late bool _expanded = widget.index == 0;
+  late final AnimationController _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+      value: _expanded ? 1 : 0);
 
   @override
   void dispose() {
@@ -83,180 +127,143 @@ class _ExpRowState extends State<_ExpRow>
     _expanded ? _ctrl.forward() : _ctrl.reverse();
   }
 
-  Color get _accent =>
-      Color(int.parse('FF${widget.exp.color}', radix: 16));
-
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.of(context).size.width < 768;
+    final e = widget.exp;
+    final current = e.period.contains('Present');
+    final short = e.location.contains('Dubai')
+        ? 'Dubai'
+        : e.location.contains('Remote')
+            ? 'Remote'
+            : 'Philippines';
 
-    return VisibilityDetector(
-      key: Key('exp-${widget.index}'),
-      onVisibilityChanged: (info) {
-        if (info.visibleFraction > 0.1 && !_visible) {
-          setState(() => _visible = true);
-        }
-      },
-      child: AnimatedOpacity(
-        duration: Duration(milliseconds: 400 + widget.index * 80),
-        opacity: _visible ? 1 : 0,
-        child: MouseRegion(
-          onEnter: (_) => setState(() => _hovered = true),
-          onExit: (_) => setState(() => _hovered = false),
-          child: GestureDetector(
-            onTap: _toggle,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(bottom: 2),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-              decoration: BoxDecoration(
-                color: _hovered || _expanded
-                    ? AppTheme.bgCream
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-                border: Border(
-                  bottom: BorderSide(color: AppTheme.border),
+    final node = AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
+      width: 14,
+      height: 14,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: widget.reached ? AppTheme.mint : AppTheme.paper,
+        border: Border.all(
+            color: widget.reached ? AppTheme.mint : AppTheme.borderDark, width: 2),
+        boxShadow: widget.reached
+            ? [BoxShadow(color: AppTheme.mint.withValues(alpha: 0.35), blurRadius: 10)]
+            : [],
+      ),
+    );
+
+    final period = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(e.period,
+            style: GoogleFonts.inter(
+                fontSize: 13, fontWeight: FontWeight.w600, color: AppTheme.textDark)),
+        const SizedBox(height: 4),
+        Text(short, style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textLight)),
+      ],
+    );
+
+    final card = LiftCard(
+      onTap: _toggle,
+      padding: const EdgeInsets.fromLTRB(26, 24, 22, 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.isNarrow) ...[
+                      period,
+                      const SizedBox(height: 10),
+                    ],
+                    Text(e.company,
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.3,
+                            color: AppTheme.textBlack)),
+                    const SizedBox(height: 3),
+                    Text(e.title,
+                        style: GoogleFonts.inter(fontSize: 13.5, color: AppTheme.textGray)),
+                  ],
                 ),
               ),
+              const SizedBox(width: 12),
+              if (current)
+                Container(
+                  margin: const EdgeInsets.only(right: 10, top: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                      color: AppTheme.mintSoft, borderRadius: BorderRadius.circular(100)),
+                  child: Text('Current',
+                      style: GoogleFonts.inter(
+                          fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.mint)),
+                ),
+              AnimatedRotation(
+                turns: _expanded ? 0.5 : 0,
+                duration: const Duration(milliseconds: 300),
+                child: const Icon(Icons.keyboard_arrow_down_rounded,
+                    color: AppTheme.textLight, size: 22),
+              ),
+            ],
+          ),
+          SizeTransition(
+            sizeFactor: CurvedAnimation(parent: _ctrl, curve: Curves.easeInOutCubic),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      // Color dot
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _accent,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      if (!isNarrow) ...[
-                        SizedBox(
-                          width: 80,
-                          child: Text(
-                            widget.exp.location.contains('Dubai')
-                                ? 'Dubai'
-                                : widget.exp.location.contains('Remote')
-                                    ? 'Remote'
-                                    : 'Philippines',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: AppTheme.textLight,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 24),
-                      ],
-
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.exp.company,
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.textBlack,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              widget.exp.title,
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: AppTheme.textGray,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      if (widget.exp.period.contains('Present'))
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFDCFCE7),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Text(
-                            'Current',
-                            style: GoogleFonts.inter(
-                              fontSize: 11,
-                              color: const Color(0xFF16A34A),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-
-                      const SizedBox(width: 16),
-                      AnimatedRotation(
-                        turns: _expanded ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 300),
-                        child: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          color: AppTheme.textLight,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Expandable highlights
-                  SizeTransition(
-                    sizeFactor: _expand,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 20),
-                      child: Column(
+                  for (final h in e.highlights)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 9),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: widget.exp.highlights
-                            .map((h) => Padding(
-                                  padding:
-                                      const EdgeInsets.only(bottom: 8),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 6),
-                                        child: Container(
-                                          width: 4,
-                                          height: 4,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: _accent,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          h,
-                                          style: GoogleFonts.inter(
-                                            fontSize: 13,
-                                            color: AppTheme.textGray,
-                                            height: 1.5,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ))
-                            .toList(),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Container(
+                              width: 5,
+                              height: 5,
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle, color: AppTheme.mint),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(child: Text(h, style: AppTheme.body(size: 13.5))),
+                        ],
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
           ),
+        ],
+      ),
+    );
+
+    return Reveal(
+      index: 2 + widget.index,
+      from: const Offset(0.04, 0.06),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!widget.isNarrow) SizedBox(width: widget.railX - 30, child: period),
+            SizedBox(
+              width: widget.isNarrow ? widget.railX * 2 + 2 : 62,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 22),
+                child: Center(child: node),
+              ),
+            ),
+            Expanded(child: card),
+          ],
         ),
       ),
     );
