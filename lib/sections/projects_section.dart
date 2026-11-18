@@ -85,6 +85,30 @@ class ProjectItem {
 
 const _projects = [
   ProjectItem(
+    title: 'NEXORO',
+    subtitle: 'Quote-to-Invoice ERP for Trading Companies',
+    description:
+        'One platform for every sales operation: quotations, approvals, sales orders, '
+        'delivery notes, tax invoices, stock and automation, sharing one set of customers, '
+        'products and prices so nothing is typed twice. Discount limits route quotations to '
+        'the right manager, accepted quotes become orders in one click, deliveries deduct '
+        'stock from the right warehouse, and invoices carry gap-free numbering, tax by rate '
+        'and the amount in words. Tax is calculated with exact decimal arithmetic on screen '
+        'and re-checked on the server. A visual automation builder runs reminders, alerts '
+        'and scheduled reports, a Design Studio brands five PDF layouts with a live preview, '
+        'and live dashboards export to Excel. Five built-in roles, a full audit trail and '
+        'hardened sign-in make it the system of record.',
+    image: 'assets/images/nexoro_placeholder.jpg',
+    extraImages: [],
+    aspect: 4 / 3,
+    tags: ['React', 'Cloudflare', 'ERP', 'Quotations', 'Tax Invoicing', 'Automation', 'UAE'],
+    accentColor: Color(0xFF4F46E5),
+    status: 'Live',
+    liveUrl: 'https://nexoro.digital',
+    browserUrl: 'nexoro.digital',
+    imageLabels: ['Overview'],
+  ),
+  ProjectItem(
     title: 'Fleeto',
     subtitle: 'Car Rental Management SaaS',
     description:
