@@ -70,7 +70,7 @@ class _Logo {
 
 const _logos = [
   _Logo('assets/images/logos/fleeto.png', 'Fleeto', 1.0),
-  _Logo('assets/images/logos/luxe_pm.png', 'Luxe Signature PM', 1.9),
+  _Logo('assets/images/logos/luxe_pm.png', 'Luxe Signature PM', 2.1),
   _Logo('assets/images/logos/hris.png', 'Luxe HRIS', 1.0),
   _Logo('assets/images/logos/maal.png', 'Maal', 1.0),
   _Logo('assets/images/logos/waggo.png', 'Waggo', 1.0),
