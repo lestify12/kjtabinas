@@ -226,6 +226,8 @@ const _projects = [
     extraImages: [
       'assets/images/pm_tenant_payments.jpg',
       'assets/images/pm_transfer_sublease.jpg',
+      'assets/images/pm_sublease_dashboard.jpg',
+      'assets/images/pm_owner_statement.jpg',
     ],
     aspect: 4 / 3,
     tags: ['Supabase', 'Cloudflare', 'Real Estate', 'UAE'],
@@ -242,6 +244,8 @@ const _projects = [
       'Add contract term',
       'Tenant payments',
       'Transfer to sublease',
+      'Sublease dashboard',
+      'Owner statement',
     ],
   ),
   ProjectItem(
