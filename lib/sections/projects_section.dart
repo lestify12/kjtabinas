@@ -97,120 +97,25 @@ const _projects = [
         'rental, and car financing that shows real profit per vehicle after the bank. '
         'Role-based access for owners, branch managers, agents, accountants and fleet '
         'managers, with reports and results per branch or across the whole company.',
-    image: 'assets/images/fleeto_dashboard.jpg',
-    imageAlt: 'assets/images/fleeto_reservations.jpg',
+    image: 'assets/images/fleeto_landing.jpg',
+    imageAlt: 'assets/images/fleeto_dashboard.jpg',
     extraImages: [
+      'assets/images/fleeto_reservations.jpg',
       'assets/images/fleeto_fleet.jpg',
       'assets/images/fleeto_payments.jpg',
-      'assets/images/fleeto_contracts.jpg',
     ],
+    aspect: 4 / 3,
     tags: ['Next.js', 'React', 'Vercel', 'SaaS', 'Multi-Branch', 'Car Rental'],
     accentColor: Color(0xFFE5342E),
     status: 'Live',
     liveUrl: 'https://fleeto.digital',
     browserUrl: 'fleeto.digital',
     imageLabels: [
+      'Landing page',
       'Dashboard',
       'Reservations',
       'Fleet',
       'Payments',
-      'Contracts',
-    ],
-  ),
-  ProjectItem(
-    title: 'Maal',
-    subtitle: 'Offline-First Budget Tracker for the Gulf',
-    description:
-        'A personal finance app built for how money actually moves in the Gulf. Tracks '
-        'multi-currency accounts and net worth, pace-aware budgets, savings goals, and '
-        'BNPL and loan installments — with full Arabic RTL, a 50+ GCC bank catalog, and '
-        'IBAN validation. Everything lives in on-device SQLite: no account, no server, '
-        'no analytics.',
-    note:
-        'Discontinued. Maal is no longer being developed or maintained. It stays in '
-        'the portfolio because the product work is worth showing: every screen here '
-        'is designed, built and working.',
-    image: 'assets/images/cover_maal.jpg',
-    imageAlt: 'assets/images/maal_dashboard.png',
-    extraImages: [
-      'assets/images/maal_wallet.png',
-      'assets/images/maal_budget.png',
-      'assets/images/maal_goals.png',
-      'assets/images/maal_installments.png',
-    ],
-    tags: ['React Native', 'Expo', 'SQLite', 'Offline-First', 'UAE / GCC'],
-    languages: [
-      Lang('TypeScript', 87.3),
-      Lang('HTML', 9.1),
-      Lang('JavaScript', 1.9),
-      Lang('CSS', 1.2),
-      Lang('Swift', 0.5),
-    ],
-    accentColor: Color(0xFF0A2C63),
-    status: 'Discontinued',
-    isMobileApp: true,
-    hasDeviceFrame: true,
-    bannerCover: true,
-    coverBackdrop: Color(0xFF000C27),
-    imageLabels: [
-      'Overview',
-      'Dashboard',
-      'Wallet',
-      'Budget',
-      'Goals',
-      'Installments',
-    ],
-  ),
-  ProjectItem(
-    title: 'Waggo',
-    subtitle: 'Pet Care Marketplace',
-    description:
-        'A pet-care platform for the UAE. Pet parents keep a profile for every '
-        'animal, find verified PawRovers and PawKeepers nearby, and book walks, '
-        'play sessions, potty breaks, drop-in visits or house sitting — then '
-        'follow each booking through to handover. The sitter side is built too: '
-        'onboarding, verification badges, services, rates and availability.',
-    note:
-        'Discontinued. Waggo needs a registered business behind it — trade licence, '
-        'insurance and a properly vetted sitter network — before it could safely take '
-        'a real booking, so the build stopped at a finished prototype rather than ship '
-        'half a duty of care. It stays in the portfolio because the product work is '
-        'worth showing: every screen here is designed, built and working.',
-    image: 'assets/images/cover_waggo.jpg',
-    imageAlt: 'assets/images/waggo_discover.jpg',
-    extraImages: [
-      'assets/images/waggo_provider.jpg',
-      'assets/images/waggo_bookings.jpg',
-      'assets/images/waggo_booking_detail.jpg',
-      'assets/images/waggo_pets.jpg',
-      'assets/images/waggo_pet_profile.jpg',
-      'assets/images/waggo_pet_new.jpg',
-      'assets/images/waggo_become_provider.jpg',
-      'assets/images/waggo_profile.jpg',
-      'assets/images/waggo_settings.jpg',
-    ],
-    tags: ['React Native', 'Expo', 'Supabase', 'Marketplace', 'UAE'],
-    languages: [
-      Lang('TypeScript', 80.9),
-      Lang('PLpgSQL', 16.7),
-      Lang('JavaScript', 2.4),
-    ],
-    accentColor: Color(0xFF1B5E3A),
-    status: 'Discontinued',
-    isMobileApp: true,
-    bannerCover: true,
-    imageLabels: [
-      'Overview',
-      'Discover',
-      'Sitter Profile',
-      'Bookings',
-      'Booking Detail',
-      'My Pets',
-      'Pet Profile',
-      'Add a Pet',
-      'Become a Sitter',
-      'Profile',
-      'Settings',
     ],
   ),
   ProjectItem(

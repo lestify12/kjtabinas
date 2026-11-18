@@ -72,8 +72,6 @@ const _logos = [
   _Logo('assets/images/logos/fleeto.png', 'Fleeto', 1.0),
   _Logo('assets/images/logos/luxe_pm.png', 'Luxe PM', 1.0),
   _Logo('assets/images/logos/hris.png', 'Luxe HRIS', 1.0),
-  _Logo('assets/images/logos/maal.png', 'Maal', 1.0),
-  _Logo('assets/images/logos/waggo.png', 'Waggo', 1.0),
 ];
 
 // ─── Wide layout ─────────────────────────────────────────────────────────────

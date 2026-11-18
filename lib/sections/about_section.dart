@@ -148,7 +148,7 @@ class _Side extends StatelessWidget {
           children: const [
             Expanded(child: _Stat(index: 2, end: 3, suffix: '+', label: 'Years building\nsystems')),
             SizedBox(width: 14),
-            Expanded(child: _Stat(index: 3, end: 6, suffix: '', label: 'Systems built\nend to end')),
+            Expanded(child: _Stat(index: 3, end: 4, suffix: '', label: 'Systems built\nend to end')),
           ],
         ),
         const SizedBox(height: 14),

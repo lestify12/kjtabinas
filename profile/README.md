@@ -59,11 +59,9 @@ they run on, end to end and mostly on my own.
 | Project | What it is | Stack | Status |
 | :--- | :--- | :--- | :--- |
 | **Fleeto** | Multi-tenant SaaS for car rental companies — fleet, reservations with double-booking prevention, handovers, contracts, payments, pricing, maintenance, fines, car financing and role-based teams across branches. [fleeto.digital](https://fleeto.digital) | Next.js · React · Vercel | 🟢 Live |
-| **Maal** | Offline-first budget tracker for the Gulf — multi-currency accounts, pace-aware budgets, savings goals and installment tracking. Arabic RTL, 50+ GCC banks, IBAN validation, everything on-device. | React&nbsp;Native · Expo · SQLite | ⚪ Discontinued |
 | **Property Management System** | All-in-one platform for UAE property managers — 412 units across 68 properties. Leases, tenants, landlords, agents, rent collection, invoicing, approvals, maintenance and income reporting. | HTML/JS · Supabase · Cloudflare | 🟢 Live |
 | **Long-Term Lease System** | Third book of the property platform for annual letting — tenancy contracts generated with their cheque schedule, a cheque register tracking every post-dated cheque through cleared or bounced, renewal reminders four months out, Ejari and an owner portal. | HTML/JS · Supabase · Cloudflare | 🟢 Live |
 | **HRIS** | Full HR system built from scratch — employee records, biometric attendance sync, leave and cash-advance workflows, payroll, recruitment and self-service. | JS/TS · Supabase | 🟢 Live |
-| **Waggo** | Pet-care marketplace — pet profiles, verified sitters, bookings from walk to handover. | React&nbsp;Native · Expo · Supabase | ⚪ Discontinued |
 
 > Repositories for these are private. Screens, write-ups and the full case studies
 > are on **[kjtabinas.online](https://kjtabinas.online)**.
