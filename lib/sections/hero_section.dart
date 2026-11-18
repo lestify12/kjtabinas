@@ -345,6 +345,17 @@ class _Portrait extends StatelessWidget {
                   end: const Offset(1, 1),
                   duration: 700.ms),
 
+          // The far side of the loop, behind the portrait.
+          Positioned(
+            left: -archW * 0.22,
+            right: -archW * 0.30,
+            top: -archH * 0.12,
+            bottom: -archH * 0.04,
+            child: IgnorePointer(
+              child: CustomPaint(painter: const _LoopPainter(front: false)),
+            ),
+          ).animate().fadeIn(delay: 600.ms, duration: 900.ms),
+
           // The photo: black and white, fading out at the hem, clipped only at
           // the arch's foot so the head can overflow the top.
           Positioned(
@@ -389,14 +400,14 @@ class _Portrait extends StatelessWidget {
                 .slideY(begin: 0.04, end: 0, delay: 200.ms, duration: 900.ms),
           ),
 
-          // The green line that loops the portrait and runs off to the badge.
+          // The near side of the loop, in front of the portrait, with the tail.
           Positioned(
             left: -archW * 0.22,
             right: -archW * 0.30,
             top: -archH * 0.12,
             bottom: -archH * 0.04,
             child: IgnorePointer(
-              child: CustomPaint(painter: _LoopPainter()),
+              child: CustomPaint(painter: const _LoopPainter(front: true)),
             ),
           ).animate().fadeIn(delay: 600.ms, duration: 900.ms),
 
@@ -432,12 +443,19 @@ class _BelowClipper extends CustomClipper<Rect> {
 }
 
 class _LoopPainter extends CustomPainter {
+  /// `front` paints the near side of each turn, the starting curl and the
+  /// tail to the badge; `back` paints the far side, to sit behind the photo.
+  final bool front;
+  const _LoopPainter({required this.front});
+
   // Ellipse the line travels on: angle 0 is the right-hand point, angles
   // decrease as the line moves from the left, down across the front of the
   // body, out to the right, round the back and across the front once more.
+  static double _angle(double t) => math.pi * 0.95 - t * math.pi * 2.95;
+
   static Offset _on(double w, double h, double t) {
     const cx = 0.47, cy = 0.68, tilt = -0.12;
-    final a = math.pi * 0.95 - t * math.pi * 2.95; // 1.5 turns, minus a little
+    final a = _angle(t);
     final rx = w * (0.40 - 0.07 * t);
     final ry = h * (0.115 - 0.03 * t);
     final x = math.cos(a) * rx;
@@ -447,6 +465,10 @@ class _LoopPainter extends CustomPainter {
       h * cy + x * math.sin(tilt) + y * math.cos(tilt),
     );
   }
+
+  /// The lower half of the ellipse (screen y below its centre) is the side
+  /// nearest the viewer.
+  static bool _isNear(double t) => math.sin(_angle(t)) >= -0.02;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -460,36 +482,57 @@ class _LoopPainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
     final path = Path();
-
-    // A small curl to start from, just left of where the sweep begins.
     final first = _on(w, h, 0);
-    final c0 = Offset(first.dx - w * 0.035, first.dy + h * 0.035);
-    final r0x = w * 0.04, r0y = h * 0.032;
-    path.moveTo(c0.dx + r0x, c0.dy);
-    for (var i = 1; i <= 48; i++) {
-      final a = i / 48 * math.pi * 1.75;
-      path.lineTo(c0.dx + math.cos(a) * r0x, c0.dy - math.sin(a) * r0y);
-    }
-    path.lineTo(first.dx, first.dy);
 
-    for (var i = 1; i <= 220; i++) {
-      final p = _on(w, h, i / 220);
-      path.lineTo(p.dx, p.dy);
+    if (front) {
+      // A small curl to start from, just left of where the sweep begins.
+      final c0 = Offset(first.dx - w * 0.035, first.dy + h * 0.035);
+      final r0x = w * 0.04, r0y = h * 0.032;
+      path.moveTo(c0.dx + r0x, c0.dy);
+      for (var i = 1; i <= 48; i++) {
+        final a = i / 48 * math.pi * 1.75;
+        path.lineTo(c0.dx + math.cos(a) * r0x, c0.dy - math.sin(a) * r0y);
+      }
+      path.lineTo(first.dx, first.dy);
     }
 
-    // Away from the right-hand point, up the outside of the arch, to the badge.
-    final last = _on(w, h, 1);
-    path.cubicTo(
-      last.dx + w * 0.10, last.dy - h * 0.06,
-      w * 0.92, h * 0.42,
-      w * 0.79, h * 0.25,
-    );
+    // Walk the sweep, drawing only the runs that belong to this layer. Each
+    // run overlaps the other layer's by a step, so the joins stay seamless.
+    const n = 240;
+    var drawing = false;
+    for (var i = 0; i <= n; i++) {
+      final t = i / n;
+      final mine = _isNear(t) == front;
+      final p = _on(w, h, t);
+      if (mine) {
+        if (!drawing) {
+          final prev = _on(w, h, math.max(0, i - 1) / n);
+          path.moveTo(prev.dx, prev.dy);
+          drawing = true;
+        }
+        path.lineTo(p.dx, p.dy);
+      } else if (drawing) {
+        path.lineTo(p.dx, p.dy);
+        drawing = false;
+      }
+    }
+
+    if (front) {
+      // Away from the right-hand point, up the outside of the arch, to the badge.
+      final last = _on(w, h, 1);
+      path.moveTo(last.dx, last.dy);
+      path.cubicTo(
+        last.dx + w * 0.10, last.dy - h * 0.06,
+        w * 0.92, h * 0.42,
+        w * 0.79, h * 0.25,
+      );
+    }
 
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter old) => false;
+  bool shouldRepaint(covariant _LoopPainter old) => old.front != front;
 }
 
 // ─── Talk badge: text set round a ring, slowly turning ───────────────────────
