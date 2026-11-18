@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import '../utils/cv.dart';
 
 class NavBar extends StatelessWidget {
   final ScrollController scrollController;
@@ -33,7 +34,7 @@ class NavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: scrolled
             ? AppTheme.bgCream.withValues(alpha: 0.95)
-            : AppTheme.bgCream,
+            : Colors.transparent,
         border: Border(
           bottom: BorderSide(
             color: scrolled ? AppTheme.border : Colors.transparent,
@@ -61,10 +62,11 @@ class NavBar extends StatelessWidget {
             _Link('Works', () => _scrollTo(sectionKeys[2])),
             _Link('About', () => _scrollTo(sectionKeys[1])),
             _Link('Skills', () => _scrollTo(sectionKeys[3])),
+            _Link('Contact', () => _scrollTo(sectionKeys[5])),
             const SizedBox(width: 16),
-            _ContactBtn(() => _scrollTo(sectionKeys[5])),
+            const _CvBtn(),
           ] else
-            _ContactBtn(() => _scrollTo(sectionKeys[5])),
+            const _CvBtn(),
         ],
       ),
     );
@@ -107,40 +109,46 @@ class _LinkState extends State<_Link> {
   }
 }
 
-class _ContactBtn extends StatefulWidget {
-  final VoidCallback onTap;
-  const _ContactBtn(this.onTap);
+class _CvBtn extends StatefulWidget {
+  const _CvBtn();
 
   @override
-  State<_ContactBtn> createState() => _ContactBtnState();
+  State<_CvBtn> createState() => _CvBtnState();
 }
 
-class _ContactBtnState extends State<_ContactBtn> {
+class _CvBtnState extends State<_CvBtn> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
+      cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: widget.onTap,
+        onTap: downloadCV,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
-            color: _hovered ? AppTheme.textBlack : Colors.transparent,
+            color: _hovered ? const Color(0xFF333333) : AppTheme.textBlack,
             borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: AppTheme.textBlack, width: 1.5),
           ),
-          child: Text(
-            'Contact',
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _hovered ? Colors.white : AppTheme.textBlack,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Download CV',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.download_rounded, size: 15, color: Colors.white),
+            ],
           ),
         ),
       ),

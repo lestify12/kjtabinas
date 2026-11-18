@@ -60,8 +60,10 @@ class _PortfolioHomeState extends State<PortfolioHome> {
     super.dispose();
   }
 
-  void _scrollToAbout() {
-    final ctx = _aboutKey.currentContext;
+  void _scrollToAbout() => _scrollToKey(_aboutKey);
+
+  void _scrollToKey(GlobalKey key) {
+    final ctx = key.currentContext;
     if (ctx != null) {
       Scrollable.ensureVisible(ctx,
           duration: const Duration(milliseconds: 700),
@@ -81,7 +83,11 @@ class _PortfolioHomeState extends State<PortfolioHome> {
             child: Column(
               children: [
                 // Hero — full viewport height
-                HeroSection(onScrollDown: _scrollToAbout),
+                HeroSection(
+                  onScrollDown: _scrollToAbout,
+                  onProjects: () => _scrollToKey(_projectsKey),
+                  onContact: () => _scrollToKey(_contactKey),
+                ),
 
                 // About
                 KeyedSubtree(
