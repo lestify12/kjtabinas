@@ -98,15 +98,26 @@ const _projects = [
         'and scheduled reports, a Design Studio brands five PDF layouts with a live preview, '
         'and live dashboards export to Excel. Five built-in roles, a full audit trail and '
         'hardened sign-in make it the system of record.',
-    image: 'assets/images/nexoro_placeholder.jpg',
-    extraImages: [],
+    image: 'assets/images/nexoro_website.jpg',
+    imageAlt: 'assets/images/nexoro_dashboard.jpg',
+    extraImages: [
+      'assets/images/nexoro_quotation.jpg',
+      'assets/images/nexoro_design_studio.jpg',
+      'assets/images/nexoro_automation.jpg',
+    ],
     aspect: 4 / 3,
     tags: ['React', 'Cloudflare', 'ERP', 'Quotations', 'Tax Invoicing', 'Automation', 'UAE'],
     accentColor: Color(0xFF4F46E5),
     status: 'Live',
     liveUrl: 'https://nexoro.digital',
     browserUrl: 'nexoro.digital',
-    imageLabels: ['Overview'],
+    imageLabels: [
+      'Website',
+      'Dashboard',
+      'Quotation builder',
+      'Design Studio',
+      'Automation builder',
+    ],
   ),
   ProjectItem(
     title: 'Fleeto',
