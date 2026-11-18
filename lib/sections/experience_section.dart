@@ -194,14 +194,9 @@ class _EntryState extends State<_Entry> with SingleTickerProviderStateMixin {
               ),
               const SizedBox(width: 12),
               if (current)
-                Container(
-                  margin: const EdgeInsets.only(right: 10, top: 2),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: AppTheme.mintSoft, borderRadius: BorderRadius.circular(100)),
-                  child: Text('Current',
-                      style: GoogleFonts.inter(
-                          fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.mint)),
+                const Padding(
+                  padding: EdgeInsets.only(right: 14, top: 4),
+                  child: StatusMark('Current', color: AppTheme.mint),
                 ),
               AnimatedRotation(
                 turns: _expanded ? 0.5 : 0,

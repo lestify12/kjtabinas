@@ -70,7 +70,7 @@ class _Logo {
 
 const _logos = [
   _Logo('assets/images/logos/fleeto.png', 'Fleeto', 1.0),
-  _Logo('assets/images/logos/luxe_pm.png', 'Luxe Signature PM', 2.1),
+  _Logo('assets/images/logos/luxe_pm.png', 'Luxe PM', 1.0),
   _Logo('assets/images/logos/hris.png', 'Luxe HRIS', 1.0),
   _Logo('assets/images/logos/maal.png', 'Maal', 1.0),
   _Logo('assets/images/logos/waggo.png', 'Waggo', 1.0),
@@ -97,12 +97,17 @@ class _WideHero extends StatelessWidget {
     const stripH = 112.0;
     final stage = h - stripH; // everything above the logo strip
 
-    final archW = (w * 0.30).clamp(300.0, 520.0);
-    final archH = archW * 1.02;
-    final archTop = stage * 0.17;
-    final archLeft = (w - archW) / 2;
-
     final nameSize = (w * 0.078).clamp(44.0, 108.0);
+
+    // The arch is sized by width, but never so tall that the name and title
+    // beneath it run into the strip on a short window.
+    final archTop = stage * 0.15;
+    final textBlock = nameSize * 1.1 + 70; // name, gap, title line
+    final maxArchH = stage - archTop - textBlock - 36;
+    final archW = math.min((w * 0.30).clamp(300.0, 520.0), maxArchH / 1.02)
+        .clamp(200.0, 520.0);
+    final archH = archW * 1.02;
+    final archLeft = (w - archW) / 2;
 
     return SizedBox(
       width: double.infinity,
@@ -721,12 +726,7 @@ class _SocialDotState extends State<_SocialDot> {
             duration: const Duration(milliseconds: 150),
             width: 36,
             height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _hovered ? Colors.white : Colors.transparent,
-              border: Border.all(
-                  color: _hovered ? AppTheme.border : Colors.transparent),
-            ),
+            transform: Matrix4.translationValues(0, _hovered ? -2 : 0, 0),
             child: Center(
               child: s.icon != null
                   ? Icon(s.icon, size: 18, color: color)
@@ -752,64 +752,76 @@ class _AvailableBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: AppTheme.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: const BoxDecoration(
+              shape: BoxShape.circle, color: AppTheme.accentGreen),
+        )
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.35, 1.35),
+                duration: 1100.ms,
+                curve: Curves.easeInOut),
+        const SizedBox(width: 10),
+        Text(
+          'AVAILABLE FOR NEW OPPORTUNITIES',
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 2,
+            color: AppTheme.textDark,
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 7,
-            height: 7,
-            decoration: const BoxDecoration(
-                shape: BoxShape.circle, color: AppTheme.accentGreen),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'Available for new opportunities',
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.textDark,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-// ─── The systems strip ───────────────────────────────────────────────────────
+// ─── The systems strip: a slow ticker of the systems I have built ─────────
 
-class _LogoStrip extends StatelessWidget {
+class _LogoStrip extends StatefulWidget {
   final VoidCallback onTap;
   final double logoHeight;
-  final bool wrap;
+  final bool wrap; // kept for call sites; the strip always runs
   const _LogoStrip(
       {required this.onTap, required this.logoHeight, this.wrap = false});
+
+  @override
+  State<_LogoStrip> createState() => _LogoStripState();
+}
+
+class _LogoStripState extends State<_LogoStrip>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl =
+      AnimationController(vsync: this, duration: const Duration(seconds: 28))
+        ..repeat();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final items = [
       for (final l in _logos)
-        _LogoTile(logo: l, height: logoHeight * l.height, onTap: onTap),
+        Padding(
+          padding: EdgeInsets.only(right: widget.logoHeight * 2.2),
+          child: _LogoTile(
+              logo: l, height: widget.logoHeight * l.height, onTap: widget.onTap),
+        ),
     ];
+    final doubled = [...items, ...items];
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-          vertical: wrap ? 28 : 0, horizontal: wrap ? 20 : 48),
+      padding: EdgeInsets.symmetric(vertical: widget.wrap ? 26 : 0),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.55),
         border: const Border(top: BorderSide(color: Color(0xFFE6EAE7))),
@@ -827,18 +839,38 @@ class _LogoStrip extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          wrap
-              ? Wrap(
-                  spacing: 28,
-                  runSpacing: 20,
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: items,
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: items,
+          MouseRegion(
+            onEnter: (_) => _ctrl.stop(),
+            onExit: (_) => _ctrl.repeat(),
+            child: SizedBox(
+              height: widget.logoHeight * 1.5,
+              child: ClipRect(
+                child: ShaderMask(
+                  shaderCallback: (r) => const LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      Colors.black,
+                      Colors.black,
+                      Colors.transparent
+                    ],
+                    stops: [0, 0.08, 0.92, 1],
+                  ).createShader(r),
+                  blendMode: BlendMode.dstIn,
+                  child: AnimatedBuilder(
+                    animation: _ctrl,
+                    builder: (_, __) => OverflowBox(
+                      alignment: Alignment.centerLeft,
+                      maxWidth: double.infinity,
+                      child: FractionalTranslation(
+                        translation: Offset(-_ctrl.value / 2, 0),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: doubled),
+                      ),
+                    ),
+                  ),
                 ),
+              ),
+            ),
+          ),
         ],
       ),
     );

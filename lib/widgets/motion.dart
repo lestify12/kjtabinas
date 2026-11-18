@@ -339,28 +339,189 @@ class SectionShell extends StatelessWidget {
   }
 }
 
-/// A rounded tag.
-class Pill extends StatelessWidget {
-  final String label;
-  final Color? color;
-  final Color? fill;
-  const Pill(this.label, {super.key, this.color, this.fill});
+/// Tags set as a line of small caps with a mint separator, no boxes.
+class TagLine extends StatelessWidget {
+  final List<String> items;
+  final Color color;
+  final Color separator;
+  final double size;
+  const TagLine(this.items,
+      {super.key,
+      this.color = AppTheme.textGray,
+      this.separator = AppTheme.mint,
+      this.size = 11.5});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-      decoration: BoxDecoration(
-        color: fill ?? AppTheme.bgWhite,
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: AppTheme.border),
+    final style = GoogleFonts.inter(
+      fontSize: size,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.4,
+      height: 1.9,
+      color: color,
+    );
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        for (var i = 0; i < items.length; i++) ...[
+          Text(items[i].toUpperCase(), style: style),
+          if (i < items.length - 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 9),
+              child: Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: separator),
+              ),
+            ),
+        ],
+      ],
+    );
+  }
+}
+
+/// A status as a dot and a word: "● LIVE". No box around it.
+class StatusMark extends StatelessWidget {
+  final String text;
+  final Color color;
+  final Color? textColor;
+  const StatusMark(this.text, {super.key, required this.color, this.textColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+        ),
+        const SizedBox(width: 8),
+        Text(text.toUpperCase(),
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              color: textColor ?? color,
+            )),
+      ],
+    );
+  }
+}
+
+/// A square-cornered button. Filled (ink) or outlined.
+class SquareButton extends StatefulWidget {
+  final String label;
+  final IconData? icon;
+  final VoidCallback onTap;
+  final bool filled;
+  final Color ink;
+  final Color paper;
+  const SquareButton({
+    super.key,
+    required this.label,
+    required this.onTap,
+    this.icon,
+    this.filled = true,
+    this.ink = AppTheme.textBlack,
+    this.paper = Colors.white,
+  });
+
+  @override
+  State<SquareButton> createState() => _SquareButtonState();
+}
+
+class _SquareButtonState extends State<SquareButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = widget.filled ? widget.paper : widget.ink;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+          decoration: BoxDecoration(
+            color: widget.filled
+                ? widget.ink.withValues(alpha: _hovered ? 0.86 : 1)
+                : (_hovered ? widget.ink.withValues(alpha: 0.06) : Colors.transparent),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+                color: widget.filled ? Colors.transparent : widget.ink.withValues(alpha: 0.5)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(widget.label,
+                  style: GoogleFonts.inter(
+                      fontSize: 13.5, fontWeight: FontWeight.w600, color: fg)),
+              if (widget.icon != null) ...[
+                const SizedBox(width: 9),
+                AnimatedSlide(
+                  duration: const Duration(milliseconds: 160),
+                  offset: Offset(_hovered ? 0.15 : 0, 0),
+                  child: Icon(widget.icon, size: 15, color: fg),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: color ?? AppTheme.textDark,
+    );
+  }
+}
+
+/// An underlined text link with an arrow that nudges on hover.
+class ArrowLink extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+  final Color color;
+  const ArrowLink(
+      {super.key, required this.label, required this.onTap, this.color = AppTheme.textBlack});
+
+  @override
+  State<ArrowLink> createState() => _ArrowLinkState();
+}
+
+class _ArrowLinkState extends State<ArrowLink> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(bottom: 2),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                      color: widget.color.withValues(alpha: _hovered ? 1 : 0.35), width: 1.5),
+                ),
+              ),
+              child: Text(widget.label,
+                  style: GoogleFonts.inter(
+                      fontSize: 13.5, fontWeight: FontWeight.w600, color: widget.color)),
+            ),
+            const SizedBox(width: 6),
+            AnimatedSlide(
+              duration: const Duration(milliseconds: 160),
+              offset: Offset(_hovered ? 0.2 : 0, _hovered ? -0.2 : 0),
+              child: Icon(Icons.arrow_outward_rounded, size: 15, color: widget.color),
+            ),
+          ],
         ),
       ),
     );
@@ -381,7 +542,7 @@ class LiftCard extends StatefulWidget {
     this.padding = const EdgeInsets.all(28),
     this.color = AppTheme.bgWhite,
     this.hoverColor,
-    this.radius = 22,
+    this.radius = 14,
     this.onTap,
   });
 

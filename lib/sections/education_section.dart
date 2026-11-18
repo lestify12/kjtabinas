@@ -69,7 +69,7 @@ class _DegreeCard extends StatelessWidget {
         decoration: const BoxDecoration(
           color: AppTheme.textBlack,
           borderRadius: BorderRadius.vertical(
-              top: Radius.circular(170), bottom: Radius.circular(22)),
+              top: Radius.circular(170), bottom: Radius.circular(14)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,14 +97,7 @@ class _DegreeCard extends StatelessWidget {
             Text(item.school,
                 style: GoogleFonts.inter(fontSize: 14, height: 1.5, color: Colors.white60)),
             const SizedBox(height: 18),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: Colors.white24)),
-              child: Text('Class of ${item.year}',
-                  style: GoogleFonts.inter(fontSize: 12, color: Colors.white70)),
-            ),
+            Text('CLASS OF ${item.year}', style: AppTheme.eyebrow(color: Colors.white54)),
           ],
         ),
       ),

@@ -43,7 +43,7 @@ class ContactSection extends StatelessWidget {
                   horizontal: isNarrow ? 28 : 72, vertical: isNarrow ? 56 : 88),
               decoration: BoxDecoration(
                 color: AppTheme.textBlack,
-                borderRadius: BorderRadius.circular(isNarrow ? 26 : 40),
+                borderRadius: BorderRadius.circular(isNarrow ? 16 : 24),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,15 +95,18 @@ class ContactSection extends StatelessWidget {
                       spacing: 12,
                       runSpacing: 12,
                       children: [
-                        _Btn(
+                        SquareButton(
                           label: 'Email me',
                           icon: Icons.arrow_outward_rounded,
-                          filled: true,
+                          ink: AppTheme.mint,
+                          paper: AppTheme.textBlack,
                           onTap: () => launchUrl(Uri.parse('mailto:${PortfolioData.email}')),
                         ),
-                        _Btn(
+                        SquareButton(
                           label: 'Download CV',
                           icon: Icons.download_rounded,
+                          filled: false,
+                          ink: Colors.white,
                           onTap: downloadCV,
                         ),
                       ],
@@ -193,19 +196,21 @@ class _Socials extends StatelessWidget {
   const _Socials();
 
   static const _items = [
-    ('in', 'https://www.linkedin.com/in/kjtabinas/'),
-    ('gh', 'https://github.com/lestify12'),
-    ('fb', 'https://www.facebook.com/kjtabinas'),
+    ('LinkedIn', 'https://www.linkedin.com/in/kjtabinas/'),
+    ('GitHub', 'https://github.com/lestify12'),
+    ('Facebook', 'https://www.facebook.com/kjtabinas'),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text('ELSEWHERE', style: AppTheme.eyebrow(color: Colors.white38)),
+        const SizedBox(height: 10),
         for (final (label, url) in _items)
           Padding(
-            padding: const EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(bottom: 6),
             child: _SocialBtn(label: label, url: url),
           ),
       ],
@@ -231,69 +236,25 @@ class _SocialBtnState extends State<_SocialBtn> {
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: () => launchUrl(Uri.parse(widget.url), mode: LaunchMode.externalApplication),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _hovered ? AppTheme.mint : Colors.transparent,
-            border: Border.all(color: _hovered ? AppTheme.mint : Colors.white24),
-          ),
-          child: Center(
-            child: Text(widget.label,
-                style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: _hovered ? AppTheme.textBlack : Colors.white70)),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Btn extends StatefulWidget {
-  final String label;
-  final IconData icon;
-  final bool filled;
-  final VoidCallback onTap;
-  const _Btn({required this.label, required this.icon, this.filled = false, required this.onTap});
-  @override
-  State<_Btn> createState() => _BtnState();
-}
-
-class _BtnState extends State<_Btn> {
-  bool _hovered = false;
-  @override
-  Widget build(BuildContext context) {
-    final fg = widget.filled ? AppTheme.textBlack : Colors.white;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-          transform: Matrix4.translationValues(0, _hovered ? -2 : 0, 0),
-          decoration: BoxDecoration(
-            color: widget.filled
-                ? (_hovered ? const Color(0xFF5BBE98) : AppTheme.mint)
-                : (_hovered ? Colors.white.withValues(alpha: 0.08) : Colors.transparent),
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: widget.filled ? Colors.transparent : Colors.white30),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(widget.label,
-                  style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: fg)),
-              const SizedBox(width: 8),
-              Icon(widget.icon, size: 16, color: fg),
-            ],
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 160),
+              style: GoogleFonts.inter(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w500,
+                  color: _hovered ? AppTheme.mint : Colors.white.withValues(alpha: 0.88)),
+              child: Text(widget.label),
+            ),
+            const SizedBox(width: 6),
+            AnimatedSlide(
+              duration: const Duration(milliseconds: 160),
+              offset: Offset(_hovered ? 0.25 : 0, _hovered ? -0.25 : 0),
+              child: Icon(Icons.arrow_outward_rounded,
+                  size: 13, color: _hovered ? AppTheme.mint : Colors.white38),
+            ),
+          ],
         ),
       ),
     );

@@ -1,14 +1,10 @@
-import 'dart:math' as math;
+import 'dart:async';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../widgets/motion.dart';
-// ignore: unused_import
-import 'package:flutter_animate/flutter_animate.dart';
 
 /// One slice of a repository's language breakdown, as GitHub reports it.
 class Lang {
@@ -333,15 +329,22 @@ class ProjectsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-    final isNarrow = w < 768;
+    final isNarrow = w < 860;
 
     return SectionShell(
+      maxWidth: 1240,
       backdrop: [
         Positioned(
           left: -w * 0.12,
-          top: 200,
+          top: 240,
           child: const ParallaxShift(
-              factor: -0.06, child: Glow(size: 600, color: AppTheme.lilac, opacity: 0.35)),
+              factor: -0.06, child: Glow(size: 620, color: AppTheme.lilac, opacity: 0.35)),
+        ),
+        Positioned(
+          right: -w * 0.10,
+          bottom: 200,
+          child: const ParallaxShift(
+              factor: 0.07, child: Glow(size: 560, color: AppTheme.blush, opacity: 0.35)),
         ),
       ],
       child: Column(
@@ -353,627 +356,175 @@ class ProjectsSection extends StatelessWidget {
             title: 'Things I have',
             accent: 'built.',
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 24),
           for (var i = 0; i < _projects.length; i++)
-            Reveal(
-              index: 2,
-              scaleFrom: 0.985,
-              child: _ProjectCard(project: _projects[i], isNarrow: isNarrow),
-            ),
+            _Showcase(project: _projects[i], index: i, isNarrow: isNarrow),
         ],
       ),
     );
   }
 }
 
-// ─── 3D tilt card ───────────────────────────────────────────────────────────
+// ─── One project: header, big gallery, then the story and the stack ─────────
 
-class _ProjectCard extends StatefulWidget {
+class _Showcase extends StatelessWidget {
   final ProjectItem project;
+  final int index;
   final bool isNarrow;
-  const _ProjectCard({required this.project, required this.isNarrow});
-
-  @override
-  State<_ProjectCard> createState() => _ProjectCardState();
-}
-
-class _ProjectCardState extends State<_ProjectCard>
-    with SingleTickerProviderStateMixin {
-  // 3D tilt values
-  double _tiltX = 0;
-  double _tiltY = 0;
-  bool _hovered = false;
-
-  // Floating animation
-  late final AnimationController _floatCtrl;
-  late final Animation<double> _floatAnim;
-
-  @override
-  void initState() {
-    super.initState();
-    _floatCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3500),
-    )..repeat(reverse: true);
-    _floatAnim = Tween<double>(begin: -5, end: 5).animate(
-      CurvedAnimation(parent: _floatCtrl, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _floatCtrl.dispose();
-    super.dispose();
-  }
-
-  void _updateTilt(Offset local, Size cardSize) {
-    final cx = cardSize.width / 2;
-    final cy = cardSize.height / 2;
-    setState(() {
-      _tiltY = ((local.dx - cx) / cx).clamp(-1.0, 1.0) * 10;
-      _tiltX = -((local.dy - cy) / cy).clamp(-1.0, 1.0) * 6;
-    });
-  }
-
-  void _resetTilt() {
-    setState(() {
-      _tiltX = 0;
-      _tiltY = 0;
-      _hovered = false;
-    });
-  }
+  const _Showcase({required this.project, required this.index, required this.isNarrow});
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = widget.project.accentColor;
+    final p = project;
+    final live = p.status.toLowerCase() == 'live';
+    final w = MediaQuery.of(context).size.width;
+    final titleSize = (w * 0.03).clamp(28.0, 44.0);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 48),
-      child: AnimatedBuilder(
-        animation: _floatCtrl,
-        builder: (context, child) {
-          return Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.0008)
-              ..rotateX(_tiltX * math.pi / 180)
-              ..rotateY(_tiltY * math.pi / 180)
-              ..translate(0.0, _hovered ? 0.0 : _floatAnim.value),
-            child: child,
-          );
-        },
-        child: MouseRegion(
-          onEnter: (_) => setState(() => _hovered = true),
-          onExit: (_) => _resetTilt(),
-          onHover: (e) {
-            if (!_hovered) return;
-            // Use a fixed card size estimate — avoids LayoutBuilder
-            _updateTilt(e.localPosition,
-                widget.isNarrow ? const Size(600, 600) : const Size(1200, 420));
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              color: AppTheme.bgCream,
-              border: Border.all(
-                color: _hovered
-                    ? accentColor.withValues(alpha: 0.5)
-                    : accentColor.withValues(alpha: 0.12),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: accentColor.withValues(alpha: _hovered ? 0.18 : 0.05),
-                  blurRadius: _hovered ? 50 : 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: widget.isNarrow
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _Screenshot(
-                            project: widget.project, isNarrow: widget.isNarrow),
-                        _Info(project: widget.project, hovered: _hovered),
-                      ],
-                    )
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 6,
-                          child: _Screenshot(project: widget.project),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child:
-                              _Info(project: widget.project, hovered: _hovered),
-                        ),
-                      ],
-                    ),
-            ),
-          ),
-        ),
-      ),
-    ).animate().fadeIn(duration: 700.ms).slideY(
-        begin: 0.1, end: 0, duration: 700.ms, curve: Curves.easeOutCubic);
-  }
-}
-
-// ─── Screenshot panel ────────────────────────────────────────────────────────
-
-class _Screenshot extends StatefulWidget {
-  final ProjectItem project;
-  final bool isNarrow;
-  const _Screenshot({required this.project, this.isNarrow = false});
-
-  @override
-  State<_Screenshot> createState() => _ScreenshotState();
-}
-
-class _ScreenshotState extends State<_Screenshot>
-    with SingleTickerProviderStateMixin {
-  int _index = 0;
-  late final AnimationController _fadeCtrl;
-  late final Animation<double> _fade;
-
-  @override
-  void initState() {
-    super.initState();
-    _fadeCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeInOut);
-    _fadeCtrl.value = 1.0;
-  }
-
-  /// Slides only move when the visitor asks them to — arrows and dots.
-  ///
-  /// Deliberately does not await the controller: a TickerFuture is cancelled
-  /// whenever the animation is interrupted, and awaiting one that never
-  /// resolves would strand the panel at zero opacity. Swap the image, then
-  /// fade the new one in from scratch.
-  void _goTo(int target) {
-    final images = _images;
-    if (images.length < 2) return;
-    // Dart's % is never negative for a positive divisor, so stepping back from
-    // the first slide wraps round to the last.
-    final next = target % images.length;
-    if (next == _index) return;
-    setState(() => _index = next);
-    _fadeCtrl
-      ..value = 0
-      ..forward();
-  }
-
-  /// Wraps a panel so a horizontal flick steps through the slides. Vertical
-  /// drags are untouched, so the page still scrolls normally.
-  Widget _swipeable(Widget child) {
-    if (_images.length < 2) return child;
-    return GestureDetector(
-      onHorizontalDragEnd: (d) {
-        final v = d.primaryVelocity ?? 0;
-        if (v.abs() < 100) return;
-        _goTo(_index + (v < 0 ? 1 : -1));
-      },
-      child: child,
-    );
-  }
-
-  /// Prev/next affordances pinned to the sides of the screenshot panel.
-  List<Widget> _arrows(int count, {bool light = false}) => [
-        Positioned(
-          left: 10,
-          top: 0,
-          bottom: 0,
-          child: Center(
-            child: _ArrowButton(
-              icon: Icons.chevron_left_rounded,
-              light: light,
-              onTap: () => _goTo(_index - 1),
-            ),
-          ),
-        ),
-        Positioned(
-          right: 10,
-          top: 0,
-          bottom: 0,
-          child: Center(
-            child: _ArrowButton(
-              icon: Icons.chevron_right_rounded,
-              light: light,
-              onTap: () => _goTo(_index + 1),
-            ),
-          ),
-        ),
-      ];
-
-  List<String> get _images => [
-        widget.project.image,
-        if (widget.project.imageAlt != null) widget.project.imageAlt!,
-        ...widget.project.extraImages,
-      ];
-
-  static const _labels = ['Login', 'Dashboard'];
-  static const _urls = ['luxe-pm.app', 'luxe-pm.app/dashboard'];
-
-  @override
-  void dispose() {
-    _fadeCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Mobile projects. Three shapes share one panel: a wide banner cover fills
-    // it edge to edge, screenshots that already ship inside a rendered device
-    // are shown as-is, and raw screenshots get the site's own phone shell.
-    if (widget.project.isMobileApp) {
-      final images = _images;
-      final isBanner = widget.project.bannerCover && _index == 0;
-      final framed = widget.project.hasDeviceFrame;
-      final backdrop = widget.project.coverBackdrop;
-      // Dots and arrows go light when they sit on the artwork (wide, where the
-      // banner fills the panel) or on a dark backdrop behind a letterboxed one.
-      final onDark = isBanner &&
-          (!widget.isNarrow ||
-              (backdrop != null && backdrop.computeLuminance() < 0.4));
-
-      final Widget shot = FadeTransition(
-        opacity: _fade,
-        child: Image.asset(
-          images[_index],
-          fit: isBanner
-              // A 16:9 banner inside a near-square phone panel loses ~65% of its
-              // width to BoxFit.cover — the wordmark goes with it.
-              ? (widget.isNarrow ? BoxFit.contain : BoxFit.cover)
-              : (framed ? BoxFit.contain : BoxFit.cover),
-          alignment: (isBanner || framed)
-              ? Alignment.center
-              : const Alignment(0, -0.78),
-          errorBuilder: (_, __, ___) => Center(
-            child: Icon(Icons.smartphone_rounded,
-                size: 48, color: widget.project.accentColor),
-          ),
-        ),
-      );
-
-      return _swipeable(Container(
-        height: 384,
-        color: isBanner ? (backdrop ?? AppTheme.bgLight) : AppTheme.bgLight,
-        child: Stack(
-          alignment: const Alignment(0, -0.22),
-          children: [
-            if (isBanner || framed)
-              Positioned.fill(
-                child: Padding(
-                  padding: isBanner
-                      ? EdgeInsets.zero
-                      : const EdgeInsets.fromLTRB(24, 14, 24, 34),
-                  child: shot,
-                ),
-              )
-            else
-              _PhoneMockup(
-                accentColor: widget.project.accentColor,
-                child: shot,
-              ),
-            if (images.length > 1) ..._arrows(images.length, light: onDark),
-            if (images.length > 1)
-              Positioned(
-                bottom: 14,
-                left: 0,
-                right: 0,
-                child: _DotRow(
-                  count: images.length,
-                  index: _index,
-                  onTap: _goTo,
-                  activeColor:
-                      onDark ? Colors.white : widget.project.accentColor,
-                  inactiveColor: onDark
-                      ? Colors.white.withValues(alpha: 0.45)
-                      : AppTheme.textLight.withValues(alpha: 0.4),
-                ),
-              ),
-            if (images.length > 1 && widget.project.imageLabels.length > _index)
-              Positioned(
-                bottom: 10,
-                right: 14,
-                child: _LabelChip(widget.project.imageLabels[_index]),
-              ),
-          ],
-        ),
-      ));
-    }
-
-    final images = _images;
-    final img = images[_index];
-    final url = widget.project.browserUrl ??
-        (_index < _urls.length ? _urls[_index] : _urls[0]);
-
-    return _swipeable(SizedBox(
-      height: widget.isNarrow ? 250 : 360,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Image
-          FadeTransition(
-            opacity: _fade,
-            child: Image.asset(
-              img,
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.topCenter,
-              errorBuilder: (_, __, ___) => Container(
-                color: const Color(0xFF0D1829),
-                child: Center(
-                  child: Text(
-                    widget.project.title,
-                    style: GoogleFonts.inter(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      color: AppTheme.accentCyan.withValues(alpha: 0.3),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Bottom fade
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 80,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    AppTheme.bgCream.withValues(alpha: 0.95),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Browser bar
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 28,
-              color: const Color(0xFF1A1F2E),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  _Dot(const Color(0xFFFF5F57)),
-                  const SizedBox(width: 6),
-                  _Dot(const Color(0xFFFFBD2E)),
-                  const SizedBox(width: 6),
-                  _Dot(const Color(0xFF28C840)),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Container(
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0D1829),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          url,
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            color: AppTheme.textLight,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-
-          // Navigation
-          if (images.length > 1) ..._arrows(images.length),
-
-          // Dot indicators
-          if (images.length > 1)
-            Positioned(
-              bottom: 14,
-              left: 0,
-              right: 0,
-              child: _DotRow(
-                count: images.length,
-                index: _index,
-                onTap: _goTo,
-                activeColor: AppTheme.textBlack,
-                inactiveColor: AppTheme.textLight.withValues(alpha: 0.5),
-              ),
-            ),
-
-          // Label chip bottom-right
-          if (images.length > 1)
-            Positioned(
-              bottom: 10,
-              right: 14,
-              child: _LabelChip((() {
-                final labels = widget.project.imageLabels.isNotEmpty
-                    ? widget.project.imageLabels
-                    : _labels;
-                return _index < labels.length ? labels[_index] : '';
-              })()),
-            ),
-        ],
-      ),
-    ));
-  }
-}
-
-// ─── Phone mockup frame ──────────────────────────────────────────────────────
-
-class _PhoneMockup extends StatelessWidget {
-  final Widget child;
-  final Color accentColor;
-  const _PhoneMockup({required this.child, required this.accentColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
+    final header = Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        // Glow
-        Container(
-          width: 175,
-          height: 340,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(38),
-            boxShadow: [
-              BoxShadow(
-                color: accentColor.withValues(alpha: 0.18),
-                blurRadius: 40,
-                offset: const Offset(0, 12),
-              ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('0${index + 1}',
+                  style: GoogleFonts.playfairDisplay(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: AppTheme.mint,
+                      fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Text(p.title,
+                  style: GoogleFonts.poppins(
+                      fontSize: titleSize,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: titleSize * -0.03,
+                      height: 1.05,
+                      color: AppTheme.textBlack)),
+              const SizedBox(height: 6),
+              Text(p.subtitle,
+                  style: GoogleFonts.inter(fontSize: 15, color: AppTheme.textGray)),
             ],
           ),
         ),
-        // Phone shell
-        Container(
-          width: 175,
-          height: 340,
-          decoration: BoxDecoration(
-            color: const Color(0xFF111827),
-            borderRadius: BorderRadius.circular(38),
-            border: Border.all(color: const Color(0xFF374151), width: 7),
+        if (!isNarrow) ...[
+          const SizedBox(width: 24),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              StatusMark(p.status, color: live ? AppTheme.accentGreen : AppTheme.textLight,
+                  textColor: live ? const Color(0xFF15803D) : AppTheme.textLight),
+              const SizedBox(height: 10),
+              if (p.liveUrl != null)
+                ArrowLink(
+                    label: p.browserUrl ?? 'Visit site',
+                    onTap: () => html.window.open(p.liveUrl!, '_blank'))
+              else if (p.browserUrl != null)
+                Text(p.browserUrl!,
+                    style: GoogleFonts.inter(fontSize: 13.5, color: AppTheme.textGray)),
+            ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(31),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                child,
-                // Dynamic Island pill
-                Positioned(
-                  top: 10,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      width: 52,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        ],
+      ],
+    );
+
+    final story = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(p.description, style: AppTheme.body(size: 15)),
+        if (p.note != null) ...[
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 2, 0, 2),
+            decoration: const BoxDecoration(
+                border: Border(left: BorderSide(color: AppTheme.mint, width: 2))),
+            child: Text(p.note!,
+                style: GoogleFonts.inter(
+                    fontSize: 13.5,
+                    height: 1.65,
+                    fontStyle: FontStyle.italic,
+                    color: AppTheme.textGray)),
           ),
-        ),
-        // Volume buttons left
-        Positioned(
-          left: 0,
-          top: 90,
-          child: Container(
-            width: 4,
-            height: 28,
-            decoration: BoxDecoration(
-              color: const Color(0xFF374151),
-              borderRadius: BorderRadius.circular(2),
-            ),
+        ],
+      ],
+    );
+
+    final stack = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (isNarrow) ...[
+          Row(
+            children: [
+              StatusMark(p.status, color: live ? AppTheme.accentGreen : AppTheme.textLight,
+                  textColor: live ? const Color(0xFF15803D) : AppTheme.textLight),
+              const Spacer(),
+              if (p.liveUrl != null)
+                ArrowLink(
+                    label: p.browserUrl ?? 'Visit site',
+                    onTap: () => html.window.open(p.liveUrl!, '_blank')),
+            ],
           ),
-        ),
-        Positioned(
-          left: 0,
-          top: 126,
-          child: Container(
-            width: 4,
-            height: 28,
-            decoration: BoxDecoration(
-              color: const Color(0xFF374151),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ),
-        // Power button right
-        Positioned(
-          right: 0,
-          top: 108,
-          child: Container(
-            width: 4,
-            height: 42,
-            decoration: BoxDecoration(
-              color: const Color(0xFF374151),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+          const SizedBox(height: 22),
+        ],
+        Text('STACK', style: AppTheme.eyebrow()),
+        const SizedBox(height: 8),
+        TagLine(p.tags, separator: p.accentColor),
+        if (p.languages.isNotEmpty) ...[
+          const SizedBox(height: 22),
+          Text('LANGUAGES', style: AppTheme.eyebrow()),
+          const SizedBox(height: 10),
+          _LangBar(p.languages),
+        ],
+        const SizedBox(height: 22),
+        Row(
+          children: [
+            const Icon(Icons.lock_outline, size: 13, color: AppTheme.textLight),
+            const SizedBox(width: 6),
+            Text('Private repository',
+                style: GoogleFonts.inter(fontSize: 12.5, color: AppTheme.textLight)),
+          ],
         ),
       ],
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: isNarrow ? 40 : 56),
+      decoration: BoxDecoration(
+        border: index == 0
+            ? null
+            : const Border(top: BorderSide(color: AppTheme.border)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Reveal(child: header),
+          SizedBox(height: isNarrow ? 22 : 30),
+          Reveal(index: 1, scaleFrom: 0.985, child: _Gallery(project: p, isNarrow: isNarrow)),
+          SizedBox(height: isNarrow ? 26 : 34),
+          Reveal(
+            index: 2,
+            child: isNarrow
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [story, const SizedBox(height: 28), stack])
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 7, child: story),
+                      const SizedBox(width: 64),
+                      Expanded(flex: 4, child: stack),
+                    ],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class _DotRow extends StatelessWidget {
-  final int count;
-  final int index;
-  final Color activeColor;
-  final Color? inactiveColor;
-  final ValueChanged<int>? onTap;
-  const _DotRow({
-    required this.count,
-    required this.index,
-    required this.activeColor,
-    this.inactiveColor,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(count, (i) {
-          final active = i == index;
-          return MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: onTap == null ? null : () => onTap!(i),
-              // Keep the tap target finger-friendly while the dot stays small.
-              child: Container(
-                color: Colors.transparent,
-                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 9),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: active ? 20 : 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: active
-                        ? activeColor
-                        : (inactiveColor ??
-                            AppTheme.textLight.withValues(alpha: 0.4)),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-      );
-}
-
-class _LanguageBar extends StatelessWidget {
-  final List<Lang> languages;
-  const _LanguageBar({required this.languages});
+class _LangBar extends StatelessWidget {
+  final List<Lang> langs;
+  const _LangBar(this.langs);
 
   @override
   Widget build(BuildContext context) {
@@ -981,338 +532,233 @@ class _LanguageBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(3),
+          borderRadius: BorderRadius.circular(2),
           child: SizedBox(
             height: 6,
             child: Row(
-              // ColoredBox has no intrinsic height, so without stretch the
-              // segments collapse and the bar renders empty.
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: languages
-                  // A sub-1% slice still needs to be visible, so give every
-                  // language a floor before splitting the width.
-                  .map((l) => Expanded(
-                        flex: (l.percent * 100).round().clamp(60, 1 << 20),
-                        child: ColoredBox(color: l.color),
-                      ))
-                  .toList(),
+              children: [
+                for (final l in langs)
+                  Expanded(
+                      flex: (l.percent * 10).round().clamp(1, 1000),
+                      child: Container(color: l.color)),
+              ],
             ),
           ),
         ),
         const SizedBox(height: 10),
         Wrap(
-          spacing: 14,
+          spacing: 16,
           runSpacing: 6,
-          children: languages
-              .map((l) => Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: l.color,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        l.name,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textBlack,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${l.percent}%',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppTheme.textLight,
-                        ),
-                      ),
-                    ],
-                  ))
-              .toList(),
+          children: [
+            for (final l in langs)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: l.color)),
+                  const SizedBox(width: 6),
+                  Text('${l.name} ${l.percent.toStringAsFixed(1)}%',
+                      style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textGray)),
+                ],
+              ),
+          ],
         ),
       ],
     );
   }
 }
 
-class _ArrowButton extends StatelessWidget {
-  final IconData icon;
-  final bool light;
-  final VoidCallback onTap;
-  const _ArrowButton(
-      {required this.icon, required this.onTap, this.light = false});
+// ─── Gallery: a wide frame that crossfades through the screens ──────────────
 
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            alignment: Alignment.center,
-            width: 44,
-            height: 44,
-            child: Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: light
-                    ? Colors.white.withValues(alpha: 0.22)
-                    : AppTheme.bgCream.withValues(alpha: 0.92),
-                border: Border.all(
-                  color: light
-                      ? Colors.white.withValues(alpha: 0.55)
-                      : AppTheme.border,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(icon,
-                  size: 22, color: light ? Colors.white : AppTheme.textBlack),
-            ),
-          ),
-        ),
-      );
-}
-
-class _LabelChip extends StatelessWidget {
-  final String label;
-  const _LabelChip(this.label);
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: AppTheme.bgCream.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.border),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            color: AppTheme.textGray,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      );
-}
-
-class _Dot extends StatelessWidget {
-  final Color color;
-  const _Dot(this.color);
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-      );
-}
-
-// ─── Info panel ──────────────────────────────────────────────────────────────
-
-class _Info extends StatelessWidget {
+class _Gallery extends StatefulWidget {
   final ProjectItem project;
-  final bool hovered;
-  const _Info({required this.project, required this.hovered});
+  final bool isNarrow;
+  const _Gallery({required this.project, required this.isNarrow});
+
+  @override
+  State<_Gallery> createState() => _GalleryState();
+}
+
+class _GalleryState extends State<_Gallery> {
+  int _i = 0;
+  Timer? _timer;
+  bool _hovered = false;
+
+  List<String> get _images => [
+        widget.project.image,
+        if (widget.project.imageAlt != null) widget.project.imageAlt!,
+        ...widget.project.extraImages,
+      ];
+
+  @override
+  void initState() {
+    super.initState();
+    _arm();
+  }
+
+  void _arm() {
+    _timer?.cancel();
+    if (_images.length < 2) return;
+    _timer = Timer.periodic(const Duration(milliseconds: 4200), (_) {
+      if (!_hovered && mounted) setState(() => _i = (_i + 1) % _images.length);
+    });
+  }
+
+  void _go(int d) {
+    setState(() => _i = (_i + d) % _images.length);
+    _arm();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Green reads as "running". Anything else gets a neutral treatment.
-    final live = project.status.toLowerCase() == 'live';
-    final badge = live ? AppTheme.accentGreen : AppTheme.textGray;
-    return Container(
-      padding: const EdgeInsets.all(32),
+    final p = widget.project;
+    final images = _images;
+    final labels = p.imageLabels;
+    final label = _i < labels.length ? labels[_i] : '';
+    // Phone screens and marketing banners are shown whole on a soft backdrop;
+    // browser screens fill the frame.
+    final contain = p.isMobileApp || (p.bannerCover && _i == 0);
+    final backdrop = p.coverBackdrop ?? AppTheme.paper2;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // Live badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: badge.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: badge.withValues(alpha: 0.4)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: badge,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  project.status,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: badge,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          Text(
-            project.title,
-            style: GoogleFonts.inter(
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.textBlack,
-              letterSpacing: -0.5,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          Text(
-            project.subtitle,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: project.accentColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          Text(
-            project.description,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: AppTheme.textGray,
-              height: 1.7,
-            ),
-          ),
-
-          if (project.note != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-              decoration: BoxDecoration(
-                color: AppTheme.bgLight.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(10),
-                border: Border(
-                  left: BorderSide(color: project.accentColor, width: 3),
-                ),
-              ),
-              child: Text(
-                project.note!,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  color: AppTheme.textGray,
-                  height: 1.65,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
-          ],
-
-          if (project.languages.isNotEmpty) ...[
-            const SizedBox(height: 22),
-            _LanguageBar(languages: project.languages),
-          ],
-
-          const SizedBox(height: 20),
-
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: project.tags
-                .map((t) => Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: project.accentColor.withValues(alpha: 0.07),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: project.accentColor.withValues(alpha: 0.2),
-                        ),
-                      ),
-                      child: Text(
-                        t,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: project.accentColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ))
-                .toList(),
-          ),
-
-          const SizedBox(height: 20),
-
-          Row(
-            children: [
-              Icon(Icons.lock_outline, size: 13, color: AppTheme.textLight),
-              const SizedBox(width: 6),
-              Text(
-                'Private Repository',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: AppTheme.textLight,
-                ),
-              ),
-            ],
-          ),
-
-          if (project.liveUrl != null) ...[
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: () => html.window.open(project.liveUrl!, '_blank'),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: project.accentColor.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    color: project.accentColor.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.open_in_new_rounded,
-                        size: 13, color: project.accentColor),
-                    const SizedBox(width: 7),
-                    Text(
-                      'Visit Site',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: project.accentColor,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: AspectRatio(
+              aspectRatio: widget.isNarrow ? 4 / 3 : 16 / 9,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(color: contain ? backdrop : AppTheme.paper2),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 650),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    child: Padding(
+                      key: ValueKey(_i),
+                      padding: EdgeInsets.all(contain && !(p.bannerCover && _i == 0)
+                          ? (widget.isNarrow ? 16 : 32)
+                          : 0),
+                      child: Image.asset(
+                        images[_i],
+                        fit: contain ? BoxFit.contain : BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                        filterQuality: FilterQuality.medium,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  // Slide label, bottom left.
+                  if (label.isNotEmpty)
+                    Positioned(
+                      left: 16,
+                      bottom: 16,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: Container(
+                          key: ValueKey(label),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.textBlack.withValues(alpha: 0.78),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(label.toUpperCase(),
+                              style: GoogleFonts.inter(
+                                  fontSize: 10.5,
+                                  letterSpacing: 1.8,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white)),
+                        ),
+                      ),
+                    ),
+                  // Arrows, bottom right.
+                  if (images.length > 1)
+                    Positioned(
+                      right: 14,
+                      bottom: 14,
+                      child: Row(
+                        children: [
+                          _Arrow(Icons.arrow_back_rounded, () => _go(-1)),
+                          const SizedBox(width: 6),
+                          _Arrow(Icons.arrow_forward_rounded, () => _go(1)),
+                        ],
+                      ),
+                    ),
+                ],
               ),
+            ),
+          ),
+          if (images.length > 1) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                for (var k = 0; k < images.length; k++)
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() => _i = k);
+                        _arm();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          height: 2,
+                          color: k == _i ? AppTheme.textBlack : AppTheme.border,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _Arrow extends StatefulWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _Arrow(this.icon, this.onTap);
+  @override
+  State<_Arrow> createState() => _ArrowState();
+}
+
+class _ArrowState extends State<_Arrow> {
+  bool _hovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: _hovered ? AppTheme.textBlack : Colors.white.withValues(alpha: 0.92),
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 10, offset: const Offset(0, 3))
+            ],
+          ),
+          child: Icon(widget.icon, size: 18, color: _hovered ? Colors.white : AppTheme.textBlack),
+        ),
       ),
     );
   }

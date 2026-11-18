@@ -89,13 +89,12 @@ class _Bio extends StatelessWidget {
         const SizedBox(height: 32),
         Reveal(
           index: 5,
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 10,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              _InfoPill(Icons.mail_outline_rounded, PortfolioData.email),
-              _InfoPill(Icons.call_outlined, PortfolioData.phone),
-              _InfoPill(Icons.place_outlined, PortfolioData.location),
+              _InfoRow('Email', PortfolioData.email),
+              _InfoRow('Phone', PortfolioData.phone),
+              _InfoRow('Based in', PortfolioData.location, last: true),
             ],
           ),
         ),
@@ -104,27 +103,33 @@ class _Bio extends StatelessWidget {
   }
 }
 
-class _InfoPill extends StatelessWidget {
-  final IconData icon;
+class _InfoRow extends StatelessWidget {
+  final String label;
   final String text;
-  const _InfoPill(this.icon, this.text);
+  final bool last;
+  const _InfoRow(this.label, this.text, {this.last = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 9, 16, 9),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.bgWhite,
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: AppTheme.border),
+        border: Border(
+          top: const BorderSide(color: AppTheme.border),
+          bottom: last ? const BorderSide(color: AppTheme.border) : BorderSide.none,
+        ),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 15, color: AppTheme.mint),
-          const SizedBox(width: 8),
-          Text(text,
-              style: GoogleFonts.inter(fontSize: 13, color: AppTheme.textDark)),
+          SizedBox(
+            width: 96,
+            child: Text(label.toUpperCase(), style: AppTheme.eyebrow()),
+          ),
+          Expanded(
+            child: Text(text,
+                style: GoogleFonts.inter(
+                    fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.textDark)),
+          ),
         ],
       ),
     );
@@ -161,7 +166,7 @@ class _Side extends StatelessWidget {
             padding: const EdgeInsets.all(26),
             decoration: BoxDecoration(
               color: AppTheme.textBlack,
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,21 +191,11 @@ class _Side extends StatelessWidget {
                       fontSize: 14.5, height: 1.7, color: Colors.white.withValues(alpha: 0.85)),
                 ),
                 const SizedBox(height: 18),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                Row(
                   children: [
-                    for (final l in ['English', 'Filipino'])
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: Colors.white24),
-                        ),
-                        child: Text(l,
-                            style: GoogleFonts.inter(
-                                fontSize: 12, color: Colors.white70)),
-                      ),
+                    Text('LANGUAGES', style: AppTheme.eyebrow(color: Colors.white38)),
+                    const SizedBox(width: 14),
+                    const TagLine(['English', 'Filipino'], color: Colors.white70),
                   ],
                 ),
               ],

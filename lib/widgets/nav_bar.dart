@@ -133,7 +133,7 @@ class _CvBtnState extends State<_CvBtn> {
               const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
             color: _hovered ? const Color(0xFF333333) : AppTheme.textBlack,
-            borderRadius: BorderRadius.circular(100),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

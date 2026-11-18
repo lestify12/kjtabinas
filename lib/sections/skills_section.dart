@@ -127,11 +127,7 @@ class _AreaCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(area.desc, style: AppTheme.body(size: 14.5)),
             const SizedBox(height: 20),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [for (final t in area.tools) Pill(t, fill: AppTheme.paper)],
-            ),
+            TagLine(area.tools),
           ],
         ),
       ),
@@ -221,23 +217,28 @@ class _ChipState extends State<_Chip> {
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        margin: const EdgeInsets.only(right: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        decoration: BoxDecoration(
-          color: _hovered ? AppTheme.textBlack : AppTheme.bgWhite,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: _hovered ? AppTheme.textBlack : AppTheme.border),
-        ),
-        child: Text(
-          widget.label,
-          style: GoogleFonts.inter(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: _hovered ? Colors.white : AppTheme.textDark,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 150),
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.6,
+              color: _hovered ? AppTheme.textBlack : AppTheme.textGray,
+            ),
+            child: Text(widget.label.toUpperCase()),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22),
+            child: Container(
+              width: 5,
+              height: 5,
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: AppTheme.mint),
+            ),
+          ),
+        ],
       ),
     );
   }
