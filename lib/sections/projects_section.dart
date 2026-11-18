@@ -84,6 +84,41 @@ class ProjectItem {
 
 const _projects = [
   ProjectItem(
+    title: 'Fleeto',
+    subtitle: 'Car Rental Management SaaS',
+    description:
+        'A multi-tenant platform for car rental companies, from a single lot to a '
+        'multi-branch enterprise fleet. Every company runs in its own FleetSpace: fleet '
+        'with documents and expiry alerts, reservations with database-enforced '
+        'availability so a car can never be double-booked, handovers with mileage, fuel, '
+        'photos and damage, branded rental agreements, deposits and payments, flexible '
+        'pricing, maintenance that blocks bookings, fines and tolls tied to the right '
+        'rental, and car financing that shows real profit per vehicle after the bank. '
+        'Role-based access for owners, branch managers, agents, accountants and fleet '
+        'managers, with reports and results per branch or across the whole company.',
+    image: 'assets/images/cover_fleeto.jpg',
+    imageAlt: 'assets/images/fleeto_dashboard.jpg',
+    extraImages: [
+      'assets/images/fleeto_reservations.jpg',
+      'assets/images/fleeto_fleet.jpg',
+      'assets/images/fleeto_payments.jpg',
+      'assets/images/fleeto_contracts.jpg',
+    ],
+    tags: ['Next.js', 'React', 'Vercel', 'SaaS', 'Multi-Branch', 'Car Rental'],
+    accentColor: Color(0xFFE5342E),
+    status: 'Live',
+    liveUrl: 'https://fleeto.digital',
+    browserUrl: 'fleeto.digital',
+    imageLabels: [
+      'Overview',
+      'Dashboard',
+      'Reservations',
+      'Fleet',
+      'Payments',
+      'Contracts',
+    ],
+  ),
+  ProjectItem(
     title: 'Maal',
     subtitle: 'Offline-First Budget Tracker for the Gulf',
     description:
