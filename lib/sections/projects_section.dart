@@ -186,6 +186,8 @@ const _projects = [
       'assets/images/lt_leases.jpg',
       'assets/images/lt_tenancy.jpg',
       'assets/images/lt_landlord.jpg',
+      'assets/images/lt_tenant.jpg',
+      'assets/images/lt_cheques.jpg',
     ],
     aspect: 4 / 3,
     tags: ['Supabase', 'Cloudflare', 'Long-Term Leasing', 'Real Estate', 'UAE'],
@@ -203,6 +205,8 @@ const _projects = [
       'All leases',
       'Tenancy detail',
       'Landlord',
+      'Tenant',
+      'Cheque register',
     ],
   ),
   ProjectItem(
