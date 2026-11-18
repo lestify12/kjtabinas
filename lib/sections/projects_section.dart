@@ -307,6 +307,7 @@ const _projects = [
       'assets/images/hris_attendance.jpg',
       'assets/images/hris_approvals.jpg',
       'assets/images/hris_leave.jpg',
+      'assets/images/hris_warning.jpg',
     ],
     aspect: 4 / 3,
     tags: [
@@ -331,6 +332,7 @@ const _projects = [
       'Team attendance',
       'Approvals',
       'Leave request',
+      'Attendance warning',
     ],
   ),
 ];
