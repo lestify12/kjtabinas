@@ -334,7 +334,6 @@ class ProjectsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-    final isNarrow = w < 860;
 
     return SectionShell(
       maxWidth: 1240,
@@ -361,216 +360,149 @@ class ProjectsSection extends StatelessWidget {
             title: 'Things I have',
             accent: 'built.',
           ),
-          const SizedBox(height: 24),
-          for (var i = 0; i < _projects.length; i++)
-            _Showcase(project: _projects[i], index: i, isNarrow: isNarrow),
+          const SizedBox(height: 48),
+          LayoutBuilder(builder: (context, c) {
+            final cols = c.maxWidth >= 960 ? 2 : 1;
+            const gap = 24.0;
+            final cw = (c.maxWidth - gap * (cols - 1)) / cols;
+            return Wrap(
+              spacing: gap,
+              runSpacing: gap,
+              children: [
+                for (var i = 0; i < _projects.length; i++)
+                  SizedBox(
+                    width: cw,
+                    child: Reveal(
+                      index: (i % cols) + 1,
+                      scaleFrom: 0.985,
+                      child: _GridCard(project: _projects[i], index: i),
+                    ),
+                  ),
+              ],
+            );
+          }),
         ],
       ),
     );
   }
 }
 
-// ─── One project: header, big gallery, then the story and the stack ─────────
+// ─── One card: gallery on top, the essentials beneath ───────────────────────
 
-class _Showcase extends StatelessWidget {
+class _GridCard extends StatelessWidget {
   final ProjectItem project;
   final int index;
-  final bool isNarrow;
-  const _Showcase({required this.project, required this.index, required this.isNarrow});
+  const _GridCard({required this.project, required this.index});
 
   @override
   Widget build(BuildContext context) {
     final p = project;
     final live = p.status.toLowerCase() == 'live';
-    final w = MediaQuery.of(context).size.width;
-    final titleSize = (w * 0.03).clamp(28.0, 44.0);
 
-    final header = Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('0${index + 1}',
-                  style: GoogleFonts.playfairDisplay(
-                      fontSize: 15,
-                      fontStyle: FontStyle.italic,
-                      color: AppTheme.mint,
-                      fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              Text(p.title,
-                  style: GoogleFonts.poppins(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: titleSize * -0.03,
-                      height: 1.05,
-                      color: AppTheme.textBlack)),
-              const SizedBox(height: 6),
-              Text(p.subtitle,
-                  style: GoogleFonts.inter(fontSize: 15, color: AppTheme.textGray)),
-            ],
-          ),
-        ),
-        if (!isNarrow) ...[
-          const SizedBox(width: 24),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              StatusMark(p.status, color: live ? AppTheme.accentGreen : AppTheme.textLight,
-                  textColor: live ? const Color(0xFF15803D) : AppTheme.textLight),
-              const SizedBox(height: 10),
-              if (p.liveUrl != null)
-                ArrowLink(
-                    label: p.browserUrl ?? 'Visit site',
-                    onTap: () => html.window.open(p.liveUrl!, '_blank'))
-              else if (p.browserUrl != null)
-                Text(p.browserUrl!,
-                    style: GoogleFonts.inter(fontSize: 13.5, color: AppTheme.textGray)),
-            ],
-          ),
-        ],
-      ],
-    );
-
-    final story = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(p.description, style: AppTheme.body(size: 15)),
-        if (p.note != null) ...[
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 2, 0, 2),
-            decoration: const BoxDecoration(
-                border: Border(left: BorderSide(color: AppTheme.mint, width: 2))),
-            child: Text(p.note!,
-                style: GoogleFonts.inter(
-                    fontSize: 13.5,
-                    height: 1.65,
-                    fontStyle: FontStyle.italic,
-                    color: AppTheme.textGray)),
-          ),
-        ],
-      ],
-    );
-
-    final stack = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (isNarrow) ...[
-          Row(
-            children: [
-              StatusMark(p.status, color: live ? AppTheme.accentGreen : AppTheme.textLight,
-                  textColor: live ? const Color(0xFF15803D) : AppTheme.textLight),
-              const Spacer(),
-              if (p.liveUrl != null)
-                ArrowLink(
-                    label: p.browserUrl ?? 'Visit site',
-                    onTap: () => html.window.open(p.liveUrl!, '_blank')),
-            ],
-          ),
-          const SizedBox(height: 22),
-        ],
-        Text('STACK', style: AppTheme.eyebrow()),
-        const SizedBox(height: 8),
-        TagLine(p.tags, separator: p.accentColor),
-        if (p.languages.isNotEmpty) ...[
-          const SizedBox(height: 22),
-          Text('LANGUAGES', style: AppTheme.eyebrow()),
-          const SizedBox(height: 10),
-          _LangBar(p.languages),
-        ],
-        const SizedBox(height: 22),
-        Row(
+    return LiftCard(
+      padding: EdgeInsets.zero,
+      radius: 16,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.lock_outline, size: 13, color: AppTheme.textLight),
-            const SizedBox(width: 6),
-            Text('Private repository',
-                style: GoogleFonts.inter(fontSize: 12.5, color: AppTheme.textLight)),
-          ],
-        ),
-      ],
-    );
-
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: isNarrow ? 40 : 56),
-      decoration: BoxDecoration(
-        border: index == 0
-            ? null
-            : const Border(top: BorderSide(color: AppTheme.border)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Reveal(child: header),
-          SizedBox(height: isNarrow ? 22 : 30),
-          Reveal(index: 1, scaleFrom: 0.985, child: _Gallery(project: p, isNarrow: isNarrow)),
-          SizedBox(height: isNarrow ? 26 : 34),
-          Reveal(
-            index: 2,
-            child: isNarrow
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [story, const SizedBox(height: 28), stack])
-                : Row(
+            _Gallery(project: p),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(26, 22, 26, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(flex: 7, child: story),
-                      const SizedBox(width: 64),
-                      Expanded(flex: 4, child: stack),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text('0${index + 1}',
+                                    style: GoogleFonts.playfairDisplay(
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppTheme.mint)),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(p.title,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: -0.6,
+                                          height: 1.1,
+                                          color: AppTheme.textBlack)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(p.subtitle,
+                                style: GoogleFonts.inter(
+                                    fontSize: 13.5, color: AppTheme.textGray)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      StatusMark(p.status,
+                          color: live ? AppTheme.accentGreen : AppTheme.textLight,
+                          textColor: live ? const Color(0xFF15803D) : AppTheme.textLight),
                     ],
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LangBar extends StatelessWidget {
-  final List<Lang> langs;
-  const _LangBar(this.langs);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: SizedBox(
-            height: 6,
-            child: Row(
-              children: [
-                for (final l in langs)
-                  Expanded(
-                      flex: (l.percent * 10).round().clamp(1, 1000),
-                      child: Container(color: l.color)),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 16,
-          runSpacing: 6,
-          children: [
-            for (final l in langs)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                      width: 7,
-                      height: 7,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: l.color)),
-                  const SizedBox(width: 6),
-                  Text('${l.name} ${l.percent.toStringAsFixed(1)}%',
-                      style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textGray)),
+                  const SizedBox(height: 14),
+                  Text(
+                    p.description,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTheme.body(size: 14),
+                  ),
+                  if (p.note != null) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(12, 1, 0, 1),
+                      decoration: const BoxDecoration(
+                          border: Border(left: BorderSide(color: AppTheme.mint, width: 2))),
+                      child: Text(p.note!,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                              fontSize: 12.5,
+                              height: 1.55,
+                              fontStyle: FontStyle.italic,
+                              color: AppTheme.textGray)),
+                    ),
+                  ],
+                  const SizedBox(height: 18),
+                  TagLine(p.tags, separator: p.accentColor, size: 10.5),
+                  const SizedBox(height: 18),
+                  Container(height: 1, color: AppTheme.border),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      const Icon(Icons.lock_outline, size: 13, color: AppTheme.textLight),
+                      const SizedBox(width: 6),
+                      Text('Private repository',
+                          style: GoogleFonts.inter(fontSize: 12.5, color: AppTheme.textLight)),
+                      const Spacer(),
+                      if (p.liveUrl != null)
+                        ArrowLink(
+                            label: p.browserUrl ?? 'Visit site',
+                            onTap: () => html.window.open(p.liveUrl!, '_blank'))
+                      else if (p.browserUrl != null)
+                        Text(p.browserUrl!,
+                            style: GoogleFonts.inter(fontSize: 13, color: AppTheme.textGray)),
+                    ],
+                  ),
                 ],
               ),
+            ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -579,8 +511,7 @@ class _LangBar extends StatelessWidget {
 
 class _Gallery extends StatefulWidget {
   final ProjectItem project;
-  final bool isNarrow;
-  const _Gallery({required this.project, required this.isNarrow});
+  const _Gallery({required this.project});
 
   @override
   State<_Gallery> createState() => _GalleryState();
@@ -628,106 +559,99 @@ class _GalleryState extends State<_Gallery> {
     final images = _images;
     final labels = p.imageLabels;
     final label = _i < labels.length ? labels[_i] : '';
-    // Phone screens and marketing banners are shown whole on a soft backdrop;
-    // browser screens fill the frame.
-    final contain = p.isMobileApp || (p.bannerCover && _i == 0);
     final backdrop = p.coverBackdrop ?? AppTheme.paper2;
+    // Phone screens sit with a little air around them; everything else fills
+    // the frame's width and letterboxes if it is wider than 4:3.
+    final pad = p.isMobileApp && !(p.bannerCover && _i == 0) ? 18.0 : 0.0;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: AspectRatio(
-              aspectRatio: widget.isNarrow ? 4 / 3 : p.aspect,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(color: contain ? backdrop : AppTheme.paper2),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 650),
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
-                    child: Padding(
-                      key: ValueKey(_i),
-                      padding: EdgeInsets.all(contain && !(p.bannerCover && _i == 0)
-                          ? (widget.isNarrow ? 16 : 32)
-                          : 0),
-                      child: Image.asset(
-                        images[_i],
-                        fit: contain ? BoxFit.contain : BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                        filterQuality: FilterQuality.medium,
-                      ),
-                    ),
-                  ),
-                  // Slide label, bottom left.
-                  if (label.isNotEmpty)
-                    Positioned(
-                      left: 16,
-                      bottom: 16,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: Container(
-                          key: ValueKey(label),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppTheme.textBlack.withValues(alpha: 0.78),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          child: Text(label.toUpperCase(),
-                              style: GoogleFonts.inter(
-                                  fontSize: 10.5,
-                                  letterSpacing: 1.8,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white)),
-                        ),
-                      ),
-                    ),
-                  // Arrows, bottom right.
-                  if (images.length > 1)
-                    Positioned(
-                      right: 14,
-                      bottom: 14,
-                      child: Row(
-                        children: [
-                          _Arrow(Icons.arrow_back_rounded, () => _go(-1)),
-                          const SizedBox(width: 6),
-                          _Arrow(Icons.arrow_forward_rounded, () => _go(1)),
-                        ],
-                      ),
-                    ),
-                ],
+      child: AspectRatio(
+        aspectRatio: 4 / 3,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(color: backdrop),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 650),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: Padding(
+                key: ValueKey(_i),
+                padding: EdgeInsets.all(pad),
+                child: Image.asset(
+                  images[_i],
+                  fit: BoxFit.contain,
+                  alignment: Alignment.center,
+                  filterQuality: FilterQuality.medium,
+                ),
               ),
             ),
-          ),
-          if (images.length > 1) ...[
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                for (var k = 0; k < images.length; k++)
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _i = k);
-                        _arm();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 3),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          height: 2,
-                          color: k == _i ? AppTheme.textBlack : AppTheme.border,
+            if (label.isNotEmpty)
+              Positioned(
+                left: 14,
+                bottom: 14,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    key: ValueKey(label),
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppTheme.textBlack.withValues(alpha: 0.78),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: Text(label.toUpperCase(),
+                        style: GoogleFonts.inter(
+                            fontSize: 10,
+                            letterSpacing: 1.6,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white)),
+                  ),
+                ),
+              ),
+            if (images.length > 1) ...[
+              Positioned(
+                right: 12,
+                bottom: 12,
+                child: Row(
+                  children: [
+                    _Arrow(Icons.arrow_back_rounded, () => _go(-1)),
+                    const SizedBox(width: 6),
+                    _Arrow(Icons.arrow_forward_rounded, () => _go(1)),
+                  ],
+                ),
+              ),
+              // Segment bar along the top edge of the frame.
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Row(
+                  children: [
+                    for (var k = 0; k < images.length; k++)
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _i = k);
+                            _arm();
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            height: 3,
+                            margin: const EdgeInsets.only(right: 2),
+                            color: k == _i
+                                ? AppTheme.textBlack
+                                : AppTheme.textBlack.withValues(alpha: 0.12),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-              ],
-            ),
+                  ],
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -753,8 +677,8 @@ class _ArrowState extends State<_Arrow> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          width: 38,
-          height: 38,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: _hovered ? AppTheme.textBlack : Colors.white.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(4),
@@ -762,7 +686,7 @@ class _ArrowState extends State<_Arrow> {
               BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 10, offset: const Offset(0, 3))
             ],
           ),
-          child: Icon(widget.icon, size: 18, color: _hovered ? Colors.white : AppTheme.textBlack),
+          child: Icon(widget.icon, size: 16, color: _hovered ? Colors.white : AppTheme.textBlack),
         ),
       ),
     );
