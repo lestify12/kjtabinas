@@ -58,6 +58,7 @@ they run on, end to end and mostly on my own.
 
 | Project | What it is | Stack | Status |
 | :--- | :--- | :--- | :--- |
+| **AURÉNE** | Clinic operating system for dermatology and aesthetic practices — patient CRM, scheduling with database-enforced availability, hash-locked clinical records and consents, treatment packages, VAT-correct billing with gapless invoices, commissions and UAE compliance. [aurene.live](https://aurene.live) | Next.js · React · Cloudflare | 🟢 Live |
 | **NEXORO** | Quote-to-invoice ERP for trading companies — quotations with approval limits, sales orders, delivery notes and stock, gap-free tax invoices, a visual automation builder, branded PDF templates and live analytics. [nexoro.digital](https://nexoro.digital) | React · Cloudflare | 🟢 Live |
 | **Fleeto** | Multi-tenant SaaS for car rental companies — fleet, reservations with double-booking prevention, handovers, contracts, payments, pricing, maintenance, fines, car financing and role-based teams across branches. [fleeto.digital](https://fleeto.digital) | Next.js · React · Vercel | 🟢 Live |
 | **Property Management System** | All-in-one platform for UAE property managers — 412 units across 68 properties. Leases, tenants, landlords, agents, rent collection, invoicing, approvals, maintenance and income reporting. | HTML/JS · Supabase · Cloudflare | 🟢 Live |

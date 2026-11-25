@@ -85,6 +85,31 @@ class ProjectItem {
 
 const _projects = [
   ProjectItem(
+    title: 'AURÉNE',
+    subtitle: 'Clinic Operating System for Dermatology & Aesthetic Practices',
+    description:
+        'A multi-tenant clinic management platform for dermatology and aesthetic clinics in '
+        'the UAE: patient CRM, scheduling, clinical records, packages and VAT-correct billing '
+        'in one workspace. One file per patient with history, allergies, consents, photos and '
+        'timeline; a calendar that books practitioners, rooms and devices together, with '
+        'double bookings blocked at the database; template-driven consultations whose signed '
+        'records are hash-locked and amended under audit; consents frozen before signing and '
+        'before-and-after photo sets gated by photography consent; session packages sold, '
+        'activated on payment and deducted per treatment; gapless tax invoices, payment '
+        'allocation, credit notes, refund approvals and daily cash reconciliation; '
+        'practitioner commissions by rule; and compliance built in, with row-level tenant '
+        'isolation, encrypted IDs, DHA, DOH and MOHAP licence tracking and 25-year retention.',
+    image: 'assets/images/aurene_placeholder.jpg',
+    extraImages: [],
+    aspect: 4 / 3,
+    tags: ['Next.js', 'React', 'Cloudflare', 'Healthcare', 'Clinic CRM', 'Billing', 'UAE'],
+    accentColor: Color(0xFFB08D57),
+    status: 'Live',
+    liveUrl: 'https://aurene.live',
+    browserUrl: 'aurene.live',
+    imageLabels: ['Overview'],
+  ),
+  ProjectItem(
     title: 'NEXORO',
     subtitle: 'Quote-to-Invoice ERP for Trading Companies',
     description:
