@@ -110,6 +110,8 @@ const _projects = [
       'assets/images/aurene_calendar.jpg',
       'assets/images/aurene_queue.jpg',
       'assets/images/aurene_clinical.jpg',
+      'assets/images/aurene_staff.jpg',
+      'assets/images/aurene_consultation.jpg',
     ],
     aspect: 4 / 3,
     tags: ['Next.js', 'React', 'Cloudflare', 'Healthcare', 'Clinic CRM', 'Billing', 'UAE'],
@@ -128,6 +130,8 @@ const _projects = [
       'Calendar',
       'Check-in queue',
       'Clinical records',
+      'Staff',
+      'Signed consultation',
     ],
   ),
   ProjectItem(
