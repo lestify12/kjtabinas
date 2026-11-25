@@ -99,15 +99,26 @@ const _projects = [
         'allocation, credit notes, refund approvals and daily cash reconciliation; '
         'practitioner commissions by rule; and compliance built in, with row-level tenant '
         'isolation, encrypted IDs, DHA, DOH and MOHAP licence tracking and 25-year retention.',
-    image: 'assets/images/aurene_placeholder.jpg',
-    extraImages: [],
+    image: 'assets/images/aurene_landing.jpg',
+    imageAlt: 'assets/images/aurene_modules.jpg',
+    extraImages: [
+      'assets/images/aurene_dashboard.jpg',
+      'assets/images/aurene_templates.jpg',
+      'assets/images/aurene_roles.jpg',
+    ],
     aspect: 4 / 3,
     tags: ['Next.js', 'React', 'Cloudflare', 'Healthcare', 'Clinic CRM', 'Billing', 'UAE'],
     accentColor: Color(0xFFB08D57),
     status: 'Live',
     liveUrl: 'https://aurene.live',
     browserUrl: 'aurene.live',
-    imageLabels: ['Overview'],
+    imageLabels: [
+      'Landing page',
+      'Modules',
+      'Dashboard',
+      'Clinical templates',
+      'Roles & permissions',
+    ],
   ),
   ProjectItem(
     title: 'NEXORO',
